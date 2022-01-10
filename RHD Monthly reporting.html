@@ -73,6 +73,16 @@
 		table {
 			border-collapse: collapse;
 		}
+
+		ol>li {
+			padding: 5px;
+		}
+
+		ol>li>a {
+
+			text-decoration: none;
+
+		}
 	</style>
 
 	<script type="text/javascript">
@@ -322,7 +332,7 @@
 				// table
 				var tableheader = "<th>Org Unit </th>";
 				for (const period of periods) {
-					
+
 					if (reportingRates[indicators.indexOf(indicator)].length > 0)
 						tableheader += "<th style='background-color:#FCF3CF;'>" + data.metaData.items[period].name + " " + data.metaData.items[reportingRates[indicators.indexOf(indicator)]].name + "</th>";
 					tableheader += "<th>" + data.metaData.items[period].name + " " + data.metaData.items[indicator].name + "</th>";
@@ -375,7 +385,54 @@
 				});
 			}
 
+			// create table of contents
+			function populateTableOfContents() {
+				const contents = [
+					{ href: "#indicator_1", title: 'Percentage of mothers with at least 5 antenatal visits in a cohort' },
+					{ href: "#indicator_2", title: 'Percentage of mothers receiving at least 2 TTV doses in a cohort' },
+					{ href: "#indicator_3", title: 'Percentage of women undergoing pregnancy test in a cohort' },
+					{ href: "#indicator_4", title: 'Percentage of women undergoing syphilis test in a cohort' },
+					{ href: "#indicator_5", title: 'Percentage of mothers receiving at least 3 doses of SP in a cohort' },
+					{ href: "#indicator_6", title: 'Institutional Maternal Mortality Ratio (per 100,000 deliveries in a facility)' },
+					{ href: "#indicator_7", title: 'Institutional Neonatal Mortality Rate (per 1000)' },
+					{ href: "#indicator_8", title: 'Percentage of babies started on breastfeeding within 60 minutes of birth' },
+					{ href: "#indicator_9", title: 'Fresh stillbirth per 1,000 deliveries in health facilities' },
+					{ href: "#indicator_10", title: 'Percentage of mothers who had (pre)Eclampsia (Ecl) who received anticonvulsants in a facility in that month' },
+					{ href: "#indicator_11", title: 'Percentage of Mothers receiving antenatal corticosteroids in a facility per month' },
+					{ href: "#indicator_12", title: 'Percentage of babies with asphyxia successfully resuscitated' },
+					{ href: "#indicator_13", title: 'Percentage of babies receiving tetracycline eye ointment(TEO) for all live births' },
+					{ href: "#indicator_14", title: 'Percentage of deliveries by skilled birth attendants' },
+					{ href: "#indicator_15", title: 'Days of Stock outs of tetracycline (TEO)' },
+					{ href: "#indicator_16", title: 'Days of Stock outs of antibiotic (Metronidazole 200mg)' },
+					{ href: "#indicator_17", title: 'Days of Stock outs of antibiotic (Metronidazole 250mg)' },
+					{ href: "#indicator_18", title: 'Days of Stock outs of antibiotics (Gentamicineye drops, 5ml) ' },
+					{ href: "#indicator_19", title: 'Days of Stock outs of antibiotics (Gentamicin 40mg/ml, 2ml)' },
+					{ href: "#indicator_20", title: 'Days of Stock outs of antibiotic (ceftriaxone)' },
+					{ href: "#indicator_21", title: 'Days of Stock outs of antibiotics (Benzylpenicillin)' },
+					{ href: "#indicator_22", title: 'Days of Stock outs of oxytocin' },
+					{ href: "#indicator_23", title: 'Days of Stock outs of chlorohexidine for cord care' },
+					{ href: "#indicator_24", title: 'Days of Stock outs of pregnancy test kits' },
+					{ href: "#indicator_25", title: 'Days of stock out of syphilis test kits' },
+				]
+
+				const orderedList = document.getElementById('table-of-contents');
+
+				contents.forEach(function (content) {
+					const anchor = document.createElement('a');
+					anchor.innerText = content.title;
+					anchor.href = content.href;
+					const li = document.createElement('li')
+					li.appendChild(anchor)
+					orderedList.appendChild(li);
+				})
+			}
+
+			populateTableOfContents();
+
 			myMainfunction();
+
+
+
 		})
 	</script>
 </head>
@@ -390,9 +447,11 @@
 	<br />
 	<br />
 
+	<h2>Table Of Contents</h2>
+	<ol id="table-of-contents"></ol>
 	<h2><u>Section I: Antenatal Care (ANC)</u></h2>
 	<!-- Begining of first indicator -->
-	<h2>1. Percentage of mothers with at least 5 antenatal visits in a cohort</h2>
+	<h2 id="indicator_1">1. Percentage of mothers with at least 5 antenatal visits in a cohort</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
 			<thead class="thead-dark">
@@ -442,7 +501,8 @@
 	<!-- Begining of second indicator -->
 
 
-	<h2 style="page-break-before: always;">2. Percentage of mothers receiving at least 2 TTV doses in a cohort. </h2>
+	<h2 style="page-break-before: always;" id="indicator_2">2. Percentage of mothers receiving at least 2 TTV doses in
+		a cohort. </h2>
 
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
@@ -499,7 +559,8 @@
 	<!-- end of Second indicator -->
 
 	<!-- Begining of Third indicator -->
-	<h2 style="page-break-before: always;">3. Percentage of women undergoing pregnancy test in a cohort</h2>
+	<h2 style="page-break-before: always;" id="indicator_3">3. Percentage of women undergoing pregnancy test in a cohort
+	</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
 			<thead class="thead-dark">
@@ -543,7 +604,8 @@
 	</div>
 	<!-- end of Third indicator -->
 	<!-- Begining of fourth indicator -->
-	<h2 style="page-break-before: always;">4. Percentage of women undergoing syphilis test in a cohort</h2>
+	<h2 style="page-break-before: always;" id="indicator_4">4. Percentage of women undergoing syphilis test in a cohort
+	</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
 			<thead class="thead-dark">
@@ -587,7 +649,8 @@
 	<!-- end of fourth indicator -->
 
 	<!-- Begining of fifth indicator -->
-	<h2 style="page-break-before: always;">5. Percentage of mothers receiving atleast 3 doses of SP in a cohort</h2>
+	<h2 style="page-break-before: always;" id="indicator_5">5. Percentage of mothers receiving atleast 3 doses of SP in
+		a cohort</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
 			<thead class="thead-dark">
@@ -631,7 +694,8 @@
 	<!-- end of Fifth indicator -->
 	<h2 style="page-break-before: always;"><u>Section II: Maternity</u></h2>
 	<!-- Begining of 6th indicator -->
-	<h2 style="page-break-before: always;">6. Institutional Maternal Mortality Ratio (per 100,000 deliveries in a
+	<h2 style="page-break-before: always;" id="indicator_6">6. Institutional Maternal Mortality Ratio (per 100,000
+		deliveries in a
 		facility)</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
@@ -664,7 +728,8 @@
 					Data should be triangulated on a regular basis)).
 					<br /> <b>Indicator Rationale: </b> Maternal death is a direct measure of quality of care. Analysis
 					of this data can inform health personnel on critical areas that need to be addressed.
-					Maternal death audit reports provide reliable data to track maternal deaths monthly.</td>
+					Maternal death audit reports provide reliable data to track maternal deaths monthly.
+				</td>
 			</tr>
 			<tr>
 				<td>Indicator Rationale:</td>
@@ -693,7 +758,7 @@
 	<!-- end of sixth indicator -->
 
 	<!-- Begining of 7th indicator -->
-	<h2 style="page-break-before: always;">7. Institutional Neonatal Mortality Rate (per 1000)</h2>
+	<h2 style="page-break-before: always;" id="indicator_7">7. Institutional Neonatal Mortality Rate (per 1000)</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
 			<thead class="thead-dark">
@@ -718,7 +783,8 @@
 					Alive Neonatal Death”)
 					Or
 					<br /> <b>Denominator: </b> HMIS 15 (“HMIS Total # of Live birth”) + HMIS 17 Monthly Reporting Form
-					(“HMIS 17 Live birth”) ).</td>
+					(“HMIS 17 Live birth”) ).
+				</td>
 			</tr>
 			<tr>
 				<td>Indicator Rationale:</td>
@@ -746,7 +812,8 @@
 	<!-- end of 7th indicator -->
 
 	<!-- Begining of 8th indicator -->
-	<h2 style="page-break-before: always;">8. Percentage of babies started on breastfeeding within 60 minutes of birth
+	<h2 style="page-break-before: always;" id="indicator_8">8. Percentage of babies started on breastfeeding within 60
+		minutes of birth
 	</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
@@ -792,7 +859,8 @@
 	<!-- end of 8th indicator -->
 
 	<!-- Begining of 9th indicator -->
-	<h2 style="page-break-before: always;">9. Fresh stillbirth per 1,000 deliveries in health facilities</h2>
+	<h2 style="page-break-before: always;" id="indicator_9">9. Fresh stillbirth per 1,000 deliveries in health
+		facilities</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
 			<thead class="thead-dark">
@@ -839,7 +907,8 @@
 	<!-- end of 9th indicator -->
 
 	<!-- Begining of 10th indicator -->
-	<h2 style="page-break-before: always;">10. Percentage of mothers who had (pre)Eclampsia (Ecl) who received
+	<h2 style="page-break-before: always;" id="indicator_10">10. Percentage of mothers who had (pre)Eclampsia (Ecl) who
+		received
 		anticonvulsants in a facility in that month.</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
@@ -884,7 +953,8 @@
 	<!-- end of 10th indicator -->
 
 	<!-- Begining of 11th indicator -->
-	<h2 style="page-break-before: always;">11. Percentage of Mothers receiving antenatal corticosteroids in a facility
+	<h2 style="page-break-before: always;" id="indicator_11">11. Percentage of Mothers receiving antenatal
+		corticosteroids in a facility
 		per month</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
@@ -930,7 +1000,8 @@
 	<!-- end of 11th indicator -->
 
 	<!-- Begining of 12th indicator -->
-	<h2 style="page-break-before: always;">12. Percentage of babies with asphyxia successfully resuscitated</h2>
+	<h2 style="page-break-before: always;" id="indicator_12">12. Percentage of babies with asphyxia successfully
+		resuscitated</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
 			<thead class="thead-dark">
@@ -976,7 +1047,8 @@
 	<!-- end of 12th indicator -->
 
 	<!-- Begining of 13th indicator -->
-	<h2 style="page-break-before: always;">13. Percentage of babies receiving tetracycline eye ointment(TEO) for all
+	<h2 style="page-break-before: always;" id="indicator_13">13. Percentage of babies receiving tetracycline eye
+		ointment(TEO) for all
 		live births</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
@@ -1022,7 +1094,8 @@
 	<!-- end of 13th indicator -->
 
 	<!-- Begining of 14th indicator -->
-	<h2 style="page-break-before: always;">14. Percentage of deliveries by skilled birth attendants</h2>
+	<h2 style="page-break-before: always;" id="indicator_14">14. Percentage of deliveries by skilled birth attendants
+	</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
 			<thead class="thead-dark">
@@ -1070,7 +1143,7 @@
 
 	<h2 style="page-break-before: always;"><u>Section III: Inventory / Supplies</u></h2>
 	<!-- Begining of 15th indicator -->
-	<h2 style="page-break-before: always;">15. Days of Stock outs of tetracycline (TEO)</h2>
+	<h2 style="page-break-before: always;" id="indicator_15">15. Days of Stock outs of tetracycline (TEO)</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
 			<thead class="thead-dark">
@@ -1116,7 +1189,7 @@
 	<!-- end of 15th indicator -->
 
 	<!-- Beginning of 16th indicator -->
-	<h2 style="page-break-before: always;">
+	<h2 style="page-break-before: always;" id="indicator_16">
 		<h2 style="page-break-before: always;">16. Days of Stock outs of antibiotic (Metronidazole 200mg)</h2>
 		<div class="table-responsive-sm">
 			<table class="table table-striped table-bordered table-hover">
@@ -1162,7 +1235,8 @@
 		<!-- end of 16th indicator -->
 		<!-- Beginning of 17th indicator -->
 		<h2 style="page-break-before: always;">
-			<h2 style="page-break-before: always;">17. Days of Stock outs of antibiotic (Metronidazole 250mg)</h2>
+			<h2 style="page-break-before: always;" id="indicator_17">17. Days of Stock outs of antibiotic (Metronidazole
+				250mg)</h2>
 			<div class="table-responsive-sm">
 				<table class="table table-striped table-bordered table-hover">
 					<thead class="thead-dark">
@@ -1206,377 +1280,376 @@
 			</div>
 			<!-- end of 17th indicator -->
 			<!-- Beginning of 18th indicator -->
-			<h2 style="page-break-before: always;">
-				<h2 style="page-break-before: always;">18. Days of Stock outs of antibiotics (Gentamicin eye drops, 5ml)
-				</h2>
-				<div class="table-responsive-sm">
-					<table class="table table-striped table-bordered table-hover">
-						<thead class="thead-dark">
-							<th>Item</th>
-							<th>Description</th>
-						</thead>
-						<tr>
-							<td style="width:auto;">Indicator Definition:</td>
-							<td>Stock outs of antibiotic (Gentamicin eye drops, 5ml). Tracking these drugs would help to
-								ensure facilities do not run out of stock of the antibiotics.</td>
-						</tr>
-						<tr>
-							<td>Numerator:</td>
-							<td>Days of Stock outs of antibiotics (Gentamicin eye drops, 5ml).</td>
-						</tr>
-						<tr>
-							<td>Denominator:</td>
-							<td>None</td>
-						</tr>
-						<tr>
-							<td>Indicator Rationale:</td>
-							<td>Tracing stock outs helps health personnel to store/order adequate amount of supplies to
-								prevent interruption of essential interventions.</td>
-						</tr>
+			<h2 style="page-break-before: always;" id="indicator_18">18. Days of Stock outs of antibiotics (Gentamicin
+				eye drops, 5ml)
+			</h2>
+			<div class="table-responsive-sm">
+				<table class="table table-striped table-bordered table-hover">
+					<thead class="thead-dark">
+						<th>Item</th>
+						<th>Description</th>
+					</thead>
+					<tr>
+						<td style="width:auto;">Indicator Definition:</td>
+						<td>Stock outs of antibiotic (Gentamicin eye drops, 5ml). Tracking these drugs would help to
+							ensure facilities do not run out of stock of the antibiotics.</td>
+					</tr>
+					<tr>
+						<td>Numerator:</td>
+						<td>Days of Stock outs of antibiotics (Gentamicin eye drops, 5ml).</td>
+					</tr>
+					<tr>
+						<td>Denominator:</td>
+						<td>None</td>
+					</tr>
+					<tr>
+						<td>Indicator Rationale:</td>
+						<td>Tracing stock outs helps health personnel to store/order adequate amount of supplies to
+							prevent interruption of essential interventions.</td>
+					</tr>
 
-					</table>
-				</div>
-				<div id="nationalGraphGcEmeGrU0Wf" style="width: auto; height: auto;"></br></div>
-				<div id="graphGcEmeGrU0Wf" style="width: auto; height: auto;"></br></div>
-				<div class="table-responsive-sm">
-					</br></br>
-					<table class="table table-striped table-bordered table-hover" id="table1">
-						<thead id="theadGcEmeGrU0Wf">
+				</table>
+			</div>
+			<div id="nationalGraphGcEmeGrU0Wf" style="width: auto; height: auto;"></br></div>
+			<div id="graphGcEmeGrU0Wf" style="width: auto; height: auto;"></br></div>
+			<div class="table-responsive-sm">
+				</br></br>
+				<table class="table table-striped table-bordered table-hover" id="table1">
+					<thead id="theadGcEmeGrU0Wf">
 
-						</thead>
-						<tbody id="tbodyGcEmeGrU0Wf">
+					</thead>
+					<tbody id="tbodyGcEmeGrU0Wf">
 
-						</tbody>
+					</tbody>
 
-					</table>
-				</div>
-				<!-- end of 18th indicator -->
-				<!-- Beginning of 19th indicator -->
-				<h2 style="page-break-before: always;">
-					<h2 style="page-break-before: always;">19. Days of Stock outs of antibiotics (Gentamicin 40mg/ml,
-						2ml)</h2>
-					<div class="table-responsive-sm">
-						<table class="table table-striped table-bordered table-hover">
-							<thead class="thead-dark">
-								<th>Item</th>
-								<th>Description</th>
-							</thead>
-							<tr>
-								<td style="width:auto;">Indicator Definition:</td>
-								<td>Stock outs of antibiotic (Gentamicin 40mg/ml, 2ml). Tracking these drugs would help
-									to ensure facilities do not run out of stock of the antibiotics.</td>
-							</tr>
-							<tr>
-								<td>Numerator:</td>
-								<td>Days of Stock outs of antibiotics (Gentamicin 40mg/ml, 2ml).</td>
-							</tr>
-							<tr>
-								<td>Denominator:</td>
-								<td>None</td>
-							</tr>
-							<tr>
-								<td>Indicator Rationale:</td>
-								<td>Tracing stock outs helps health personnel to store/order adequate amount of supplies
-									to prevent interruption of essential interventions.</td>
-							</tr>
+				</table>
+			</div>
+			<!-- end of 18th indicator -->
+			<!-- Beginning of 19th indicator -->
 
-						</table>
-					</div>
-					<div id="nationalGraphqwBuUIbDUwl" style="width: auto; height: auto;"></br></div>
-					<div id="graphqwBuUIbDUwl" style="width: auto; height: auto;"></br></div>
-					<div class="table-responsive-sm">
-						</br></br>
-						<table class="table table-striped table-bordered table-hover" id="table1">
-							<thead id="theadqwBuUIbDUwl">
+			<h2 style="page-break-before: always;" id="indicator_19">19. Days of Stock outs of antibiotics
+				(Gentamicin 40mg/ml, 2ml)</h2>
+			<div class="table-responsive-sm">
+				<table class="table table-striped table-bordered table-hover">
+					<thead class="thead-dark">
+						<th>Item</th>
+						<th>Description</th>
+					</thead>
+					<tr>
+						<td style="width:auto;">Indicator Definition:</td>
+						<td>Stock outs of antibiotic (Gentamicin 40mg/ml, 2ml). Tracking these drugs would help
+							to ensure facilities do not run out of stock of the antibiotics.</td>
+					</tr>
+					<tr>
+						<td>Numerator:</td>
+						<td>Days of Stock outs of antibiotics (Gentamicin 40mg/ml, 2ml).</td>
+					</tr>
+					<tr>
+						<td>Denominator:</td>
+						<td>None</td>
+					</tr>
+					<tr>
+						<td>Indicator Rationale:</td>
+						<td>Tracing stock outs helps health personnel to store/order adequate amount of supplies
+							to prevent interruption of essential interventions.</td>
+					</tr>
 
-							</thead>
-							<tbody id="tbodyqwBuUIbDUwl">
+				</table>
+			</div>
+			<div id="nationalGraphqwBuUIbDUwl" style="width: auto; height: auto;"></br></div>
+			<div id="graphqwBuUIbDUwl" style="width: auto; height: auto;"></br></div>
+			<div class="table-responsive-sm">
+				</br></br>
+				<table class="table table-striped table-bordered table-hover" id="table1">
+					<thead id="theadqwBuUIbDUwl">
 
-							</tbody>
+					</thead>
+					<tbody id="tbodyqwBuUIbDUwl">
 
-						</table>
-					</div>
-					<!-- end of 19th indicator -->
-					<!-- Begining of 20th indicator -->
-					<h2 style="page-break-before: always;">
-						<h2 style="page-break-before: always;">20. Days of Stock outs of antibiotic (ceftriaxone)</h2>
-						<div class="table-responsive-sm">
-							<table class="table table-striped table-bordered table-hover">
-								<thead class="thead-dark">
-									<th>Item</th>
-									<th>Description</th>
-								</thead>
-								<tr>
-									<td style="width:auto;">Indicator Definition:</td>
-									<td>Stock outs of antibiotics (ceftriaxone). Tracking these drugs would help to
-										ensure facilities do not run out of stock of the antibiotics.</td>
-								</tr>
-								<tr>
-									<td>Numerator:</td>
-									<td>Days of Stock outs of antibiotics (ceftriaxone).</td>
-								</tr>
-								<tr>
-									<td>Denominator:</td>
-									<td>None</td>
-								</tr>
-								<tr>
-									<td>Indicator Rationale:</td>
-									<td>Tracing stock outs helps health personnel to store/order adequate amount of
-										supplies to prevent interruption of essential interventions.</td>
-								</tr>
+					</tbody>
 
-							</table>
-						</div>
-						<div id="nationalGraphpBXqm3Bbbxd" style="width: auto; height: auto;"></br></div>
-						<div id="graphpBXqm3Bbbxd" style="width: auto; height: auto;"></br></div>
-						<div class="table-responsive-sm">
-							</br></br>
-							<table class="table table-striped table-bordered table-hover" id="table1">
-								<thead id="theadpBXqm3Bbbxd">
+				</table>
+			</div>
+			<!-- end of 19th indicator -->
+			<!-- Begining of 20th indicator -->
+			<h2 style="page-break-before: always;" id="indicator_20">20. Days of Stock outs of antibiotic (ceftriaxone)
+			</h2>
+			<div class="table-responsive-sm">
+				<table class="table table-striped table-bordered table-hover">
+					<thead class="thead-dark">
+						<th>Item</th>
+						<th>Description</th>
+					</thead>
+					<tr>
+						<td style="width:auto;">Indicator Definition:</td>
+						<td>Stock outs of antibiotics (ceftriaxone). Tracking these drugs would help to
+							ensure facilities do not run out of stock of the antibiotics.</td>
+					</tr>
+					<tr>
+						<td>Numerator:</td>
+						<td>Days of Stock outs of antibiotics (ceftriaxone).</td>
+					</tr>
+					<tr>
+						<td>Denominator:</td>
+						<td>None</td>
+					</tr>
+					<tr>
+						<td>Indicator Rationale:</td>
+						<td>Tracing stock outs helps health personnel to store/order adequate amount of
+							supplies to prevent interruption of essential interventions.</td>
+					</tr>
 
-								</thead>
-								<tbody id="tbodypBXqm3Bbbxd">
+				</table>
+			</div>
+			<div id="nationalGraphpBXqm3Bbbxd" style="width: auto; height: auto;"></br></div>
+			<div id="graphpBXqm3Bbbxd" style="width: auto; height: auto;"></br></div>
+			<div class="table-responsive-sm">
+				</br></br>
+				<table class="table table-striped table-bordered table-hover" id="table1">
+					<thead id="theadpBXqm3Bbbxd">
 
-								</tbody>
+					</thead>
+					<tbody id="tbodypBXqm3Bbbxd">
 
-							</table>
-						</div>
-						<!-- end of 20th indicator -->
-						<!-- Begining of 21st indicator -->
-						<h2 style="page-break-before: always;">
-							<h2 style="page-break-before: always;">21. Days of Stock outs of antibiotics
-								(Benzylpenicillin)</h2>
-							<div class="table-responsive-sm">
-								<table class="table table-striped table-bordered table-hover">
-									<thead class="thead-dark">
-										<th>Item</th>
-										<th>Description</th>
-									</thead>
-									<tr>
-										<td style="width:auto;">Indicator Definition:</td>
-										<td>Stock outs of antibiotics (Benzylpenicillin). Tracking these drugs would
-											help to ensure facilities do not run out of stock of the antibiotics.</td>
-									</tr>
-									<tr>
-										<td>Numerator:</td>
-										<td>Days of Stock outs of antibiotics (Benzylpenicillin).</td>
-									</tr>
-									<tr>
-										<td>Denominator:</td>
-										<td>None</td>
-									</tr>
-									<tr>
-										<td>Indicator Rationale:</td>
-										<td>Tracing stock outs helps health personnel to store/order adequate amount of
-											supplies to prevent interruption of essential interventions.</td>
-									</tr>
+					</tbody>
 
-								</table>
-							</div>
-							<div id="nationalGraphWDLOyb5bwZs" style="width: auto; height: auto;"></br></div>
-							<div id="graphWDLOyb5bwZs" style="width: auto; height: auto;"></br></div>
-							<div class="table-responsive-sm">
-								</br></br>
-								<table class="table table-striped table-bordered table-hover" id="table1">
-									<thead id="theadWDLOyb5bwZs">
+				</table>
+			</div>
+			<!-- end of 20th indicator -->
+			<!-- Begining of 21st indicator -->
+			<h2 style="page-break-before: always;" id="indicator_21">21. Days of Stock outs of antibiotics
+				(Benzylpenicillin)</h2>
+			<div class="table-responsive-sm">
+				<table class="table table-striped table-bordered table-hover">
+					<thead class="thead-dark">
+						<th>Item</th>
+						<th>Description</th>
+					</thead>
+					<tr>
+						<td style="width:auto;">Indicator Definition:</td>
+						<td>Stock outs of antibiotics (Benzylpenicillin). Tracking these drugs would
+							help to ensure facilities do not run out of stock of the antibiotics.</td>
+					</tr>
+					<tr>
+						<td>Numerator:</td>
+						<td>Days of Stock outs of antibiotics (Benzylpenicillin).</td>
+					</tr>
+					<tr>
+						<td>Denominator:</td>
+						<td>None</td>
+					</tr>
+					<tr>
+						<td>Indicator Rationale:</td>
+						<td>Tracing stock outs helps health personnel to store/order adequate amount of
+							supplies to prevent interruption of essential interventions.</td>
+					</tr>
 
-									</thead>
-									<tbody id="tbodyWDLOyb5bwZs">
+				</table>
+			</div>
+			<div id="nationalGraphWDLOyb5bwZs" style="width: auto; height: auto;"></br></div>
+			<div id="graphWDLOyb5bwZs" style="width: auto; height: auto;"></br></div>
+			<div class="table-responsive-sm">
+				</br></br>
+				<table class="table table-striped table-bordered table-hover" id="table1">
+					<thead id="theadWDLOyb5bwZs">
 
-									</tbody>
+					</thead>
+					<tbody id="tbodyWDLOyb5bwZs">
 
-								</table>
-							</div>
-							<!-- end of 21st indicator -->
+					</tbody>
 
-							<!-- Begining of 22nd indicator -->
-							<h2 style="page-break-before: always;">22. Days of Stock outs of oxytocin</h2>
-							<div class="table-responsive-sm">
-								<table class="table table-striped table-bordered table-hover">
-									<thead class="thead-dark">
-										<th>Item</th>
-										<th>Description</th>
-									</thead>
-									<tr>
-										<td style="width:auto;">Indicator Definition:</td>
-										<td>Stock outs of oxytocin. Tracking these drugs would help to ensure facilities
-											do not run out of stock of such supplies.</td>
-									</tr>
-									<tr>
-										<td>Numerator:</td>
-										<td>Days of Stock outs of oxytocin.</td>
-									</tr>
-									<tr>
-										<td>Denominator:</td>
-										<td>None</td>
-									</tr>
-									<tr>
-										<td>Indicator Rationale:</td>
-										<td>Tracing stock outs helps health personnel to store/order adequate amount of
-											supplies to prevent interruption of essential interventions.</td>
-									</tr>
+				</table>
+			</div>
+			<!-- end of 21st indicator -->
 
-								</table>
-							</div>
-							<div id="nationalGraphgD11zdrJkSb" style="width: auto; height: auto;"></br></div>
-							<div id="graphgD11zdrJkSb" style="width: auto; height: auto;"></br></div>
-							<div class="table-responsive-sm">
-								</br></br>
-								<table class="table table-striped table-bordered table-hover" id="table1">
-									<thead id="theadgD11zdrJkSb">
+			<!-- Begining of 22nd indicator -->
+			<h2 style="page-break-before: always;" id="indicator_22">22. Days of Stock outs of oxytocin</h2>
+			<div class="table-responsive-sm">
+				<table class="table table-striped table-bordered table-hover">
+					<thead class="thead-dark">
+						<th>Item</th>
+						<th>Description</th>
+					</thead>
+					<tr>
+						<td style="width:auto;">Indicator Definition:</td>
+						<td>Stock outs of oxytocin. Tracking these drugs would help to ensure facilities
+							do not run out of stock of such supplies.</td>
+					</tr>
+					<tr>
+						<td>Numerator:</td>
+						<td>Days of Stock outs of oxytocin.</td>
+					</tr>
+					<tr>
+						<td>Denominator:</td>
+						<td>None</td>
+					</tr>
+					<tr>
+						<td>Indicator Rationale:</td>
+						<td>Tracing stock outs helps health personnel to store/order adequate amount of
+							supplies to prevent interruption of essential interventions.</td>
+					</tr>
 
-									</thead>
-									<tbody id="tbodygD11zdrJkSb">
+				</table>
+			</div>
+			<div id="nationalGraphgD11zdrJkSb" style="width: auto; height: auto;"></br></div>
+			<div id="graphgD11zdrJkSb" style="width: auto; height: auto;"></br></div>
+			<div class="table-responsive-sm">
+				</br></br>
+				<table class="table table-striped table-bordered table-hover" id="table1">
+					<thead id="theadgD11zdrJkSb">
 
-									</tbody>
+					</thead>
+					<tbody id="tbodygD11zdrJkSb">
 
-								</table>
-							</div>
+					</tbody>
 
-							<!-- end of 22nd indicator -->
+				</table>
+			</div>
 
-							<!-- Begining of 23th indicator -->
-							<h2 style="page-break-before: always;">23. Days of Stock outs of chlorohexidine for cord
-								care</h2>
-							<div class="table-responsive-sm">
-								<table class="table table-striped table-bordered table-hover">
-									<thead class="thead-dark">
-										<th>Item</th>
-										<th>Description</th>
-									</thead>
-									<tr>
-										<td style="width:auto;">Indicator Definition:</td>
-										<td>Stock outs of chlorohexidine measured in number of days for which there was
-											a stock out.</td>
-									</tr>
-									<tr>
-										<td>Numerator:</td>
-										<td>Days of Stock outs of chlorohexidine for cord care</td>
-									</tr>
-									<tr>
-										<td>Denominator:</td>
-										<td>None</td>
-									</tr>
-									<tr>
-										<td>Indicator Rationale:</td>
-										<td>Neonatal sepsis is another major contributing factor of Neonatal deaths. As
-											such the use of chlorohexidine for cord care is very vital in controlling
-											infections. Tracing stock out of Chlorohexidine helps health personnel to
-											store/order adequate amount of supplies to prevent interruption of essential
-											interventions.</td>
-									</tr>
+			<!-- end of 22nd indicator -->
 
-								</table>
-							</div>
-							<div id="nationalGraph23" style="width: auto; height: auto;"></br></div>
-							<div id="graph23" style="width: auto; height: auto;"></br></div>
-							<div class="table-responsive-sm">
-								</br></br>
-								<table class="table table-striped table-bordered table-hover" id="table1">
-									<thead id="thead23">
+			<!-- Begining of 23th indicator -->
+			<h2 style="page-break-before: always;" id="indicator_23">23. Days of Stock outs of chlorohexidine for cord
+				care</h2>
+			<div class="table-responsive-sm">
+				<table class="table table-striped table-bordered table-hover">
+					<thead class="thead-dark">
+						<th>Item</th>
+						<th>Description</th>
+					</thead>
+					<tr>
+						<td style="width:auto;">Indicator Definition:</td>
+						<td>Stock outs of chlorohexidine measured in number of days for which there was
+							a stock out.</td>
+					</tr>
+					<tr>
+						<td>Numerator:</td>
+						<td>Days of Stock outs of chlorohexidine for cord care</td>
+					</tr>
+					<tr>
+						<td>Denominator:</td>
+						<td>None</td>
+					</tr>
+					<tr>
+						<td>Indicator Rationale:</td>
+						<td>Neonatal sepsis is another major contributing factor of Neonatal deaths. As
+							such the use of chlorohexidine for cord care is very vital in controlling
+							infections. Tracing stock out of Chlorohexidine helps health personnel to
+							store/order adequate amount of supplies to prevent interruption of essential
+							interventions.</td>
+					</tr>
 
-									</thead>
-									<tbody id="tbody23">
+				</table>
+			</div>
+			<div id="nationalGraph23" style="width: auto; height: auto;"></br></div>
+			<div id="graph23" style="width: auto; height: auto;"></br></div>
+			<div class="table-responsive-sm">
+				</br></br>
+				<table class="table table-striped table-bordered table-hover" id="table1">
+					<thead id="thead23">
 
-									</tbody>
+					</thead>
+					<tbody id="tbody23">
 
-								</table>
-							</div>
+					</tbody>
 
-							<!-- end of 23rd indicator -->
+				</table>
+			</div>
 
-							<!-- Begining of 24th indicator -->
-							<h2 style="page-break-before: always;">24. Days of Stock outs of pregnancy test kits</h2>
-							<div class="table-responsive-sm">
-								<table class="table table-striped table-bordered table-hover">
-									<thead class="thead-dark">
-										<th>Item</th>
-										<th>Description</th>
-									</thead>
-									<tr>
-										<td style="width:auto;">Indicator Definition:</td>
-										<td>Stock outs of pregnancy test kits as measured in number of days for which
-											the facility experienced stock outs.</td>
-									</tr>
-									<tr>
-										<td>Numerator:</td>
-										<td>Days of Stock outs of pregnancy test kits.</td>
-									</tr>
-									<tr>
-										<td>Denominator:</td>
-										<td>None</td>
-									</tr>
-									<tr>
-										<td>Indicator Rationale:</td>
-										<td>Availability of this item helps to enroll a lot of women in antenatal care
-											in the first trimester and furthermore, tracing stock outs helps health
-											personnel to store/order adequate amount of supplies to prevent interruption
-											of essential interventions.</td>
-									</tr>
+			<!-- end of 23rd indicator -->
 
-								</table>
-							</div>
-							<div id="nationalGraph24" style="width: auto; height: auto;"></br></div>
-							<div id="graph14" style="width: auto; height: auto;"></br></div>
-							<div class="table-responsive-sm">
-								</br></br>
-								<table class="table table-striped table-bordered table-hover" id="table1">
-									<thead id="thead24">
+			<!-- Begining of 24th indicator -->
+			<h2 style="page-break-before: always;" id="indicator_24">24. Days of Stock outs of pregnancy test kits</h2>
+			<div class="table-responsive-sm">
+				<table class="table table-striped table-bordered table-hover">
+					<thead class="thead-dark">
+						<th>Item</th>
+						<th>Description</th>
+					</thead>
+					<tr>
+						<td style="width:auto;">Indicator Definition:</td>
+						<td>Stock outs of pregnancy test kits as measured in number of days for which
+							the facility experienced stock outs.</td>
+					</tr>
+					<tr>
+						<td>Numerator:</td>
+						<td>Days of Stock outs of pregnancy test kits.</td>
+					</tr>
+					<tr>
+						<td>Denominator:</td>
+						<td>None</td>
+					</tr>
+					<tr>
+						<td>Indicator Rationale:</td>
+						<td>Availability of this item helps to enroll a lot of women in antenatal care
+							in the first trimester and furthermore, tracing stock outs helps health
+							personnel to store/order adequate amount of supplies to prevent interruption
+							of essential interventions.</td>
+					</tr>
 
-									</thead>
-									<tbody id="tbody24">
+				</table>
+			</div>
+			<div id="nationalGraph24" style="width: auto; height: auto;"></br></div>
+			<div id="graph14" style="width: auto; height: auto;"></br></div>
+			<div class="table-responsive-sm">
+				</br></br>
+				<table class="table table-striped table-bordered table-hover" id="table1">
+					<thead id="thead24">
 
-									</tbody>
+					</thead>
+					<tbody id="tbody24">
 
-								</table>
-							</div>
+					</tbody>
 
-							<!-- end of 24th indicator -->
+				</table>
+			</div>
 
-							<!-- Begining of 25th indicator -->
-							<h2 style="page-break-before: always;">25. Days of stock out of syphilis test kits</h2>
-							<div class="table-responsive-sm">
-								<table class="table table-striped table-bordered table-hover">
-									<thead class="thead-dark">
-										<th>Item</th>
-										<th>Description</th>
-									</thead>
-									<tr>
-										<td style="width:auto;">Indicator Definition:</td>
-										<td>The number of days for which syphilis test kits were out of stock.</td>
-									</tr>
-									<tr>
-										<td>Numerator:</td>
-										<td>Days of stock out of syphilis test kits.</td>
-									</tr>
-									<tr>
-										<td>Denominator:</td>
-										<td>None</td>
-									</tr>
-									<tr>
-										<td>Indicator Rationale:</td>
-										<td>Tracing stock outs helps health personnel to store/order adequate amount of
-											supplies to prevent interruption of essential interventions.</td>
-									</tr>
+			<!-- end of 24th indicator -->
 
-								</table>
-							</div>
-							<div id="nationalGrapht65pt8tACL9" style="width: auto; height: auto;"></br></div>
-							<div id="grapht65pt8tACL9" style="width: auto; height: auto;"></br></div>
-							<div class="table-responsive-sm">
-								</br></br>
-								<table class="table table-striped table-bordered table-hover" id="table1">
-									<thead id="theadt65pt8tACL9">
+			<!-- Begining of 25th indicator -->
+			<h2 style="page-break-before: always;" id="indicator_25">25. Days of stock out of syphilis test kits</h2>
+			<div class="table-responsive-sm">
+				<table class="table table-striped table-bordered table-hover">
+					<thead class="thead-dark">
+						<th>Item</th>
+						<th>Description</th>
+					</thead>
+					<tr>
+						<td style="width:auto;">Indicator Definition:</td>
+						<td>The number of days for which syphilis test kits were out of stock.</td>
+					</tr>
+					<tr>
+						<td>Numerator:</td>
+						<td>Days of stock out of syphilis test kits.</td>
+					</tr>
+					<tr>
+						<td>Denominator:</td>
+						<td>None</td>
+					</tr>
+					<tr>
+						<td>Indicator Rationale:</td>
+						<td>Tracing stock outs helps health personnel to store/order adequate amount of
+							supplies to prevent interruption of essential interventions.</td>
+					</tr>
 
-									</thead>
-									<tbody id="tbodyt65pt8tACL9">
+				</table>
+			</div>
+			<div id="nationalGrapht65pt8tACL9" style="width: auto; height: auto;"></br></div>
+			<div id="grapht65pt8tACL9" style="width: auto; height: auto;"></br></div>
+			<div class="table-responsive-sm">
+				</br></br>
+				<table class="table table-striped table-bordered table-hover" id="table1">
+					<thead id="theadt65pt8tACL9">
 
-									</tbody>
+					</thead>
+					<tbody id="tbodyt65pt8tACL9">
 
-								</table>
-							</div>
+					</tbody>
 
-							<!-- end of 25th indicator -->
+				</table>
+			</div>
+
+			<!-- end of 25th indicator -->
 
 </body>
 
