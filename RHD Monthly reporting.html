@@ -76,6 +76,7 @@
 
 		table {
 			border-collapse: collapse;
+
 		}
 
 		ol>li {
@@ -503,7 +504,7 @@
 				const switchCheckBox = document.getElementById("switchCheckBox");
 
 				if (switchCheckBox.checked) {
-					toggleTableVisibility("block")
+					toggleTableVisibility("table")
 				} else {
 					toggleTableVisibility("none")
 				}
@@ -548,7 +549,7 @@
 	<div>
 		<h3>Show Tables</h3>
 		<label class="switch" id="switchButton">
-			<input type="checkbox" id="switchCheckBox">
+			<input type="checkbox" id="switchCheckBox" checked>
 			<span class="slider round"></span>
 		</label>
 	</div>
