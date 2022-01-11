@@ -322,7 +322,7 @@
 				// table
 				var tableheader = "<th>Org Unit </th>";
 				for (const period of periods) {
-					
+
 					if (reportingRates[indicators.indexOf(indicator)].length > 0)
 						tableheader += "<th style='background-color:#FCF3CF;'>" + data.metaData.items[period].name + " " + data.metaData.items[reportingRates[indicators.indexOf(indicator)]].name + "</th>";
 					tableheader += "<th>" + data.metaData.items[period].name + " " + data.metaData.items[indicator].name + "</th>";
@@ -452,11 +452,11 @@
 			</thead>
 			<tr>
 				<td style="width:auto;">Indicator Definition:</td>
-				<td>Number of women with 5 ANC visits and above in a cohort expressed as a percentage in a cohort.</td>
+				<td>Percentage of mothers receiving at least 2TTV doses in a cohort.</td>
 			</tr>
 			<tr>
 				<td>Numerator:</td>
-				<td>Number of mothers with at least 5 antenatal visits in a cohort</td>
+				<td>Number of women having received at least 2 TTV doses in a cohort</td>
 			</tr>
 			<tr>
 				<td>Denominator:</td>
@@ -499,7 +499,7 @@
 	<!-- end of Second indicator -->
 
 	<!-- Begining of Third indicator -->
-	<h2 style="page-break-before: always;">3. Percentage of women undergoing pregnancy test in a cohort</h2>
+	<h2 style="page-break-before: always;">3. Percentage of women undergoing pregnancy test in the first trimester in a cohort</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
 			<thead class="thead-dark">
@@ -513,7 +513,7 @@
 			</tr>
 			<tr>
 				<td>Numerator:</td>
-				<td>Number of women undergoing pregnancy test in a cohort.</td>
+				<td>Number of women undergoing pregnancy test in the first trimester in a cohort.</td>
 			</tr>
 			<tr>
 				<td>Denominator:</td>
@@ -857,7 +857,7 @@
 			</tr>
 			<tr>
 				<td>Denominator:</td>
-				<td>Maternity monthly report.</td>
+				<td>Number of women diagnosed with (Pre-) Eclampsia</td>
 			</tr>
 			<tr>
 				<td>Indicator Rationale:</td>
