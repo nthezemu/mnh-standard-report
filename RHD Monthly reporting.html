@@ -336,6 +336,9 @@
 				const nationalDt = nationalData.rows.filter((r) => r[0] == indicator);
 				const selectedOrgDt = selectedOrgData.rows.filter((r) => r[0] == indicator);
 
+
+
+
 				nationalSeries = [
 					...nationalSeries,
 					{
@@ -345,13 +348,13 @@
 							return !value || value[3] == "" ? 0 : Number(value[3])
 						})
 					},
-					// {
-					// 	name: selectedOrgDt.metaData.items[`${dhis2.report.organisationUnit.id}`].name,
-					// 	data: periods.map((p) => {
-					// 		const value = nationalDt.find(d => d[2] == p)
-					// 		return !value || value[3] == "" ? 0 : Number(value[3])
-					// 	})
-					// },
+					{
+						name: selectedOrgData.metaData.items[`${dhis2.report.organisationUnit.id}`].name,
+						data: periods.map((p) => {
+							const value = selectedOrgDt.find(d => d[2] == p)
+							return !value || value[3] == "" ? 0 : Number(value[3])
+						})
+					},
 
 				];
 
