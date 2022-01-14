@@ -469,6 +469,9 @@
 				var periods = getPast6Months(date);
 
 
+				console.log("dhis2====>", dhis2.report.organisationUnit)
+
+
 				//    provide the indicator ids and the reporting rates indicator ids:
 				//    make sure the reporting rate indicators are aligned with the indicator its reporting on
 				//    have a block for each indicator in the body and put ids example ({tbody}{indicatorId})
@@ -615,7 +618,6 @@
 					item.setVisible(!item.visible);
 				}
 			}
-
 
 
 			populateTableOfContents();
