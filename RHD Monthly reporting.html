@@ -189,7 +189,13 @@
 	<script type="text/javascript">
 		$(document).ready(function () {
 
-			function getNationalData(orgUnit, indicators = [], periods = []) {
+
+
+
+
+
+
+			function getDataForTrendLine(orgUnit, indicators = [], periods = []) {
 				var orgUnitsText = orgUnit.id
 
 				var indicatorsText = indicators.reduce(function (acc, c) {
@@ -210,6 +216,21 @@
 					return response.json();
 				});
 			}
+
+			async function getNationalData(parentOrg, selectedOrg, indicators = [], periods = []) {
+				const nationalData = await getDataForTrendLine(parentOrg, indicators, periods)
+				const selectedOrgData = await getDataForTrendLine(selectedOrg, indicators, periods);
+
+
+				// console.log("object======>", selectedOrgData)
+
+				// return { nationalData, selectedOrgData }
+
+				return new Promise(function (resolve, reject) { resolve({ selectedOrgData, nationalData }) })
+
+			}
+
+
 
 			function getData(orgUnits, indicators = [], periods = [], reportingRates = []) {
 				var orgUnitsText = orgUnits.reduce(function (acc, c) {
@@ -238,17 +259,23 @@
 			function printData(
 				parentOrganisationUnit,
 				nationalData,
+				selectedOrgData,
 				data,
 				orgUnits,
 				indicators = [],
 				periods = [],
 				reportingRates = []
 			) {
+
+
+				console.log("nationalData=====>", nationalData)
+				console.log("nationalData=====>", selectedOrgData)
 				for (indicator of indicators) {
 					try {
 						printDataForindicator(
 							parentOrganisationUnit,
 							nationalData,
+							selectedOrgData,
 							data,
 							orgUnits,
 							indicator,
@@ -292,6 +319,7 @@
 			function printDataForindicator(
 				parentOrganisationUnit,
 				nationalData,
+				selectedOrgData,
 				data,
 				orgUnits,
 				indicator,
@@ -306,6 +334,7 @@
 				// national graph
 
 				const nationalDt = nationalData.rows.filter((r) => r[0] == indicator);
+				const selectedOrgDt = selectedOrgData.rows.filter((r) => r[0] == indicator);
 
 				nationalSeries = [
 					...nationalSeries,
@@ -316,6 +345,14 @@
 							return !value || value[3] == "" ? 0 : Number(value[3])
 						})
 					},
+					// {
+					// 	name: selectedOrgDt.metaData.items[`${dhis2.report.organisationUnit.id}`].name,
+					// 	data: periods.map((p) => {
+					// 		const value = nationalDt.find(d => d[2] == p)
+					// 		return !value || value[3] == "" ? 0 : Number(value[3])
+					// 	})
+					// },
+
 				];
 
 				// graph
@@ -469,7 +506,7 @@
 				var periods = getPast6Months(date);
 
 
-				console.log("dhis2====>", dhis2.report.organisationUnit)
+
 
 
 				//    provide the indicator ids and the reporting rates indicator ids:
@@ -482,8 +519,10 @@
 				getData(organisationUnits, indicators, periods, reportingRates).then((res) => {
 					const coverPageDisplay = organisationUnit.name + "</br>" + res.metaData.items[periods[0]].name + " - " + res.metaData.items[periods[periods.length - 1]].name;
 					document.getElementById("myText").innerHTML = coverPageDisplay;
-					getNationalData(parentOrganisationUnit, indicators, periods).then(function (resNational) {
-						printData(parentOrganisationUnit, resNational, res, organisationUnits, indicators, periods, reportingRates)
+
+
+					getNationalData(parentOrganisationUnit, organisationUnit, indicators, periods).then(function ({ nationalData, selectedOrgData }) {
+						printData(parentOrganisationUnit, nationalData, selectedOrgData, res, organisationUnits, indicators, periods, reportingRates)
 					})
 
 				});
