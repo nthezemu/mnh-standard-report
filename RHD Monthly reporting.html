@@ -470,14 +470,22 @@
 				$("#graph" + indicator).highcharts({ ...chartOptions, series });
 
 				// table
-				var tableheader = "<th>Org Unit </th>";
+				var tableheader = "<tr><th>Org Unit </th>";
+				var periodheader =""
+				var indicatorheader="<tr><th>blank</th>"
 				for (const period of periods) {
 
 					if (reportingRates[indicators.indexOf(indicator)].length > 0)
-						tableheader += "<th style='background-color:#FCF3CF;'>" + data.metaData.items[period].name + " " + data.metaData.items[reportingRates[indicators.indexOf(indicator)]].name + "</th>";
-					tableheader += "<th>" + data.metaData.items[period].name + " " + data.metaData.items[indicator].name + "</th>";
+					  periodheader += "<th style='background-color:#FCF3CF; text-align:center; padding-top:5px;padding-bottom:5px' colspan='2'>" + data.metaData.items[period].name+"</th>";
+						indicatorheader += "<th style='background-color:#FCF3CF;'>" + data.metaData.items[reportingRates[indicators.indexOf(indicator)]].name + "</th>";
+						indicatorheader += "<th>" + data.metaData.items[indicator].name + "</th>";
+
 
 				}
+				periodheader +="</tr>";
+				indicatorheader +="</tr>";
+				tableheader += periodheader
+				tableheader += indicatorheader
 
 				document.getElementById("thead" + indicator).innerHTML = tableheader;
 
@@ -536,20 +544,21 @@
 				const contents = [
 					{ href: "#section_1", title: "SECTION 1: ANTENATAL CARE (ANC)", section: true },
 					{ href: "#indicator_1", title: 'Percentage of mothers with at least 5 antenatal visits in a cohort' },
-					{ href: "#indicator_2", title: 'Percentage of mothers receiving at least 2 TTV doses in a cohort' },
-					{ href: "#indicator_3", title: 'Percentage of women undergoing pregnancy test in a cohort' },
+					{ href: "#indicator_2", title: 'Percentage of women undergoing pregnancy test in a cohort' },
+					{ href: "#indicator_3", title: 'Percentage of mothers receiving at least 2 TTV doses in a cohort' },
 					{ href: "#indicator_4", title: 'Percentage of women undergoing syphilis test in a cohort' },
 					{ href: "#indicator_5", title: 'Percentage of mothers receiving at least 3 doses of SP in a cohort' },
 					{ href: "#section_2", title: "SECTION 2: MATERNITY", section: true },
-					{ href: "#indicator_6", title: 'Institutional Maternal Mortality Ratio (per 100,000 deliveries in a facility)' },
-					{ href: "#indicator_7", title: 'Institutional Neonatal Mortality Rate (per 1000)' },
-					{ href: "#indicator_8", title: 'Percentage of babies started on breastfeeding within 60 minutes of birth' },
-					{ href: "#indicator_9", title: 'Fresh stillbirth per 1,000 deliveries in health facilities' },
-					{ href: "#indicator_10", title: 'Percentage of mothers who had (pre)Eclampsia (Ecl) who received anticonvulsants in a facility in that month' },
-					{ href: "#indicator_11", title: 'Percentage of Mothers receiving antenatal corticosteroids in a facility per month' },
-					{ href: "#indicator_12", title: 'Percentage of babies with asphyxia successfully resuscitated' },
-					{ href: "#indicator_13", title: 'Percentage of babies receiving tetracycline eye ointment(TEO) for all live births' },
-					{ href: "#indicator_14", title: 'Percentage of deliveries by skilled birth attendants' },
+					{ href: "#indicator_6", title: 'Percentage of deliveries by skilled birth attendants' },
+					{ href: "#indicator_7", title: 'Percentage of babies with asphyxia successfully resuscitated' },
+					{ href: "#indicator_8", title: 'Institutional Neonatal Mortality Rate (per 1000)' },
+					{ href: "#indicator_9", title: 'Percentage of babies started on breastfeeding within 60 minutes of birth' },
+					{ href: "#indicator_10", title: 'Percentage of babies receiving tetracycline eye ointment(TEO) for all live births' },
+					{ href: "#indicator_11", title: 'Fresh stillbirth per 1,000 deliveries in health facilities' },
+					{ href: "#indicator_12", title: 'Percentage of mothers who had (pre)Eclampsia (Ecl) who received anticonvulsants in a facility in that month' },
+					{ href: "#indicator_13", title: 'Percentage of Mothers receiving antenatal corticosteroids in a facility per month' },
+					{ href: "#indicator_14", title: 'Institutional Maternal Mortality Ratio (per 100,000 deliveries in a facility)' },
+
 					{ href: "#section_3", title: "SECTION 3: INVENTORY / SUPPLIES", section: true },
 					{ href: "#indicator_15", title: 'Days of Stock outs of tetracycline (TEO)' },
 					{ href: "#indicator_16", title: 'Days of Stock outs of antibiotic (Metronidazole 200mg)' },
@@ -748,10 +757,60 @@
 	</div>
 	<!-- end of first indicator -->
 
+
 	<!-- Begining of second indicator -->
+	<h2 style="page-break-before: always;" id="indicator_2">2. Percentage of women undergoing pregnancy test in first
+		trimester in a cohort
+	</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Number of women that have tested for pregnancy expressed as a percentage based on total number in a
+					cohort.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of women undergoing pregnancy test in the first trimester in a cohort.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of pregnant women in a cohort</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Testing women for pregnancy helps to enroll women who have not yet showed signs of pregnancy
+					physically in antenatal. This test would increase ANC enrollment in first trimester.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphjrg8XgstsT9" style="width: auto; height: auto;"></br></div>
+
+	<button chartId="graphjrg8XgstsT9" class="btn chart-reset">reset dataset </button>
+	<button chartId="graphjrg8XgstsT9" class="btn chart-toggle">toggle dataset</button>
+	<div id="graphjrg8XgstsT9" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadjrg8XgstsT9">
+
+			</thead>
+			<tbody id="tbodyjrg8XgstsT9">
+			</tbody>
+
+		</table>
+	</div>
 
 
-	<h2 style="page-break-before: always;" id="indicator_2">2. Percentage of mothers receiving at least 2 TTV doses in
+	<!-- end of Second indicator -->
+
+	<!-- Begining of Third indicator -->
+	<h2 style="page-break-before: always;" id="indicator_3">3. Percentage of mothers receiving at least 2 TTV doses in
 		a cohort. </h2>
 
 	<div class="table-responsive-sm">
@@ -809,56 +868,8 @@
 		<!-- <h4>ANC: Percentage of women receiving at least 2 doses of TTV</h4> -->
 		<img id="ancchart3">
 	</div>
-	<!-- end of Second indicator -->
-
-	<!-- Begining of Third indicator -->
-	<h2 style="page-break-before: always;" id="indicator_3">3. Percentage of women undergoing pregnancy test in first
-		trimester in a cohort
-	</h2>
-	<div class="table-responsive-sm">
-		<table class="table table-striped table-bordered table-hover">
-			<thead class="thead-dark">
-				<th>Item</th>
-				<th>Description</th>
-			</thead>
-			<tr>
-				<td style="width:auto;">Indicator Definition:</td>
-				<td>Number of women that have tested for pregnancy expressed as a percentage based on total number in a
-					cohort.</td>
-			</tr>
-			<tr>
-				<td>Numerator:</td>
-				<td>Number of women undergoing pregnancy test in the first trimester in a cohort.</td>
-			</tr>
-			<tr>
-				<td>Denominator:</td>
-				<td>Total number of pregnant women in a cohort</td>
-			</tr>
-			<tr>
-				<td>Indicator Rationale:</td>
-				<td>Testing women for pregnancy helps to enroll women who have not yet showed signs of pregnancy
-					physically in antenatal. This test would increase ANC enrollment in first trimester.</td>
-			</tr>
-
-		</table>
-	</div>
-	<div id="nationalGraphjrg8XgstsT9" style="width: auto; height: auto;"></br></div>
-
-	<button chartId="graphjrg8XgstsT9" class="btn chart-reset">reset dataset </button>
-	<button chartId="graphjrg8XgstsT9" class="btn chart-toggle">toggle dataset</button>
-	<div id="graphjrg8XgstsT9" style="width: auto; height: auto;"></br></div>
-	<div class="table-responsive-sm">
-		</br></br>
-		<table class="table table-striped table-bordered table-hover" id="table1">
-			<thead id="theadjrg8XgstsT9">
-
-			</thead>
-			<tbody id="tbodyjrg8XgstsT9">
-			</tbody>
-
-		</table>
-	</div>
 	<!-- end of Third indicator -->
+
 	<!-- Begining of fourth indicator -->
 	<h2 style="page-break-before: always;" id="indicator_4">4. Percentage of women undergoing syphilis test in a cohort
 	</h2>
@@ -954,114 +965,10 @@
 		</table>
 	</div>
 	<!-- end of Fifth indicator -->
+
 	<h2 style="page-break-before: always;" id="section_2"><u>Section II: Maternity</u></h2>
 	<!-- Begining of 6th indicator -->
-	<h2 style="page-break-before: always;" id="indicator_6">6. Institutional Maternal Mortality Ratio (per 100,000
-		deliveries in a
-		facility)</h2>
-	<div class="table-responsive-sm">
-		<table class="table table-striped table-bordered table-hover">
-			<thead class="thead-dark">
-				<th>Item</th>
-				<th>Description</th>
-			</thead>
-			<tr>
-				<td style="width:auto;">Indicator Definition:</td>
-				<td>Institutional Maternal Mortality Ratio (per 100,000 deliveries in a facility) is a Per 100,000
-					indicator, with the numerator described as Number of Maternal deaths in health facilities and
-					denominator described as Number of deliveries in health facilities.</td>
-			</tr>
-			<tr>
-				<td>Numerator:</td>
-				<td>Number of Maternal deaths in a health facility.</td>
-			</tr>
-			<tr>
-				<td>Denominator:</td>
-				<td></b> Number of deliveries in health facilities<br />
-				</td>
-			</tr>
-			<tr>
-				<td>Indicator Rationale:</td>
-				<td>This indicator is a measure of women's encounter with the health personnel. It is assumed that the
-					targeted visits would give the women an opportunity to access a full package of ANC interventions.
-					The visits would also assist the health providers to identify complications on time and address
-					them.</td>
-			</tr>
-
-		</table>
-	</div>
-	<div id="nationalGraphRKw1hU7nde2" style="width: auto; height: auto;"></br></div>
-
-	<button chartId="graphRKw1hU7nde2" class="btn chart-reset">reset dataset </button>
-	<button chartId="graphRKw1hU7nde2" class="btn chart-toggle">toggle dataset</button>
-	<div id="graphRKw1hU7nde2" style="width: auto; height: auto;"></br></div>
-	<div class="table-responsive-sm">
-		</br></br>
-		<table class="table table-striped table-bordered table-hover" id="table1">
-			<thead id="theadRKw1hU7nde2">
-
-			</thead>
-			<tbody id="tbodyRKw1hU7nde2">
-
-			</tbody>
-
-		</table>
-	</div>
-	<!-- end of sixth indicator -->
-
-	<!-- Begining of 7th indicator -->
-	<h2 style="page-break-before: always;" id="indicator_7">7. Institutional Neonatal Mortality Rate (per 1000)</h2>
-	<div class="table-responsive-sm">
-		<table class="table table-striped table-bordered table-hover">
-			<thead class="thead-dark">
-				<th>Item</th>
-				<th>Description</th>
-			</thead>
-			<tr>
-				<td style="width:auto;">Indicator Definition:</td>
-				<td>Number of deaths during the first 28 completed days of life per 1000 live births, as reported in
-					HMIS, in each period.</td>
-			</tr>
-			<tr>
-				<td>Numerator:</td>
-				<td>Number of newborns who died during the first 28 days of life in health facilities.</td>
-			</tr>
-			<tr>
-				<td>Denominator:</td>
-				<td>Total number of live births recorded in the same period in health facilities ( <br />
-				</td>
-			</tr>
-			<tr>
-				<td>Indicator Rationale:</td>
-				<td>Mortality during the neonatal period accounts for a large proportion of child deaths. Some can be
-					prevented by effective antenatal, delivery and postnatal care to women and proper care to newborns.
-					This indicator measures the quality of these services at the facility level.</td>
-			</tr>
-
-		</table>
-	</div>
-	<div id="nationalGraphXB99D7VxRo6" style="width: auto; height: auto;"></br></div>
-
-	<button chartId="graphXB99D7VxRo6" class="btn chart-reset">reset dataset </button>
-	<button chartId="graphXB99D7VxRo6" class="btn chart-toggle">toggle dataset</button>
-	<div id="graphXB99D7VxRo6" style="width: auto; height: auto;"></br></div>
-	<div class="table-responsive-sm">
-		</br></br>
-		<table class="table table-striped table-bordered table-hover" id="table1">
-			<thead id="theadXB99D7VxRo6">
-
-			</thead>
-			<tbody id="tbodyXB99D7VxRo6">
-
-			</tbody>
-
-		</table>
-	</div>
-	<!-- end of 7th indicator -->
-
-	<!-- Begining of 8th indicator -->
-	<h2 style="page-break-before: always;" id="indicator_8">8. Percentage of newborns started on breastfeeding within 60
-		minutes of birth
+	<h2 style="page-break-before: always;" id="indicator_6">6. Percentage of deliveries by skilled birth attendants
 	</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
@@ -1071,194 +978,49 @@
 			</thead>
 			<tr>
 				<td style="width:auto;">Indicator Definition:</td>
-				<td>Number of newborns starting breast feeding within 60mins of birth expressed as a percentage of total
-					number of babies.</td>
+				<td>Number of deliveries by skilled birth attendants expressed as a percentage of total number of
+					deliveries.</td>
 			</tr>
 			<tr>
 				<td>Numerator:</td>
-				<td>Number of newborns Breastfeeding Initiated within 60 mins.</td>
+				<td>Number of deliveries by skilled birth attendants.</td>
 			</tr>
 			<tr>
 				<td>Denominator:</td>
-				<td>Total number of newborns born in that facility in that month.</td>
+				<td>Total number of deliveries.</td>
 			</tr>
 			<tr>
 				<td>Indicator Rationale:</td>
-				<td>Early initiation of breastfeeding within 60mins ensures that the newborns receive colostrum, or
-					“first milk”, which is rich in protective factors.</td>
+				<td>Complications during pregnancy and childbirth are a leading cause of death and disability among
+					women of reproductive age in Malawi. Access to skilled care during childbirth is a key strategy to
+					reduce both maternal and neonatal deaths. Maternal mortality itself can be very difficult to
+					measure, making it critical to track related indicators.</td>
 			</tr>
 
 		</table>
 	</div>
-	<div id="nationalGraphuiKagpdRIX9" style="width: auto; height: auto;"></br></div>
+	<div id="nationalGraphHzlM2yb4004" style="width: auto; height: auto;"></br></div>
 
-	<button chartId="graphuiKagpdRIX9" class="btn chart-reset">reset dataset </button>
-	<button chartId="graphuiKagpdRIX9" class="btn chart-toggle">toggle dataset</button>
-	<div id="graphuiKagpdRIX9" style="width: auto; height: auto;"></br></div>
+	<button chartId="graphHzlM2yb4004" class="btn chart-reset">reset dataset </button>
+	<button chartId="graphHzlM2yb4004" class="btn chart-toggle">toggle dataset</button>
+	<div id="graphHzlM2yb4004" style="width: auto; height: auto;"></br></div>
 	<div class="table-responsive-sm">
 		</br></br>
 		<table class="table table-striped table-bordered table-hover" id="table1">
-			<thead id="theaduiKagpdRIX9">
+			<thead id="theadHzlM2yb4004">
 
 			</thead>
-			<tbody id="tbodyuiKagpdRIX9">
+			<tbody id="tbodyHzlM2yb4004">
 
 			</tbody>
 
 		</table>
 	</div>
-	<!-- end of 8th indicator -->
 
-	<!-- Begining of 9th indicator -->
-	<h2 style="page-break-before: always;" id="indicator_9">9. Fresh stillbirth per 1,000 deliveries in health
-		facilities</h2>
-	<div class="table-responsive-sm">
-		<table class="table table-striped table-bordered table-hover">
-			<thead class="thead-dark">
-				<th>Item</th>
-				<th>Description</th>
-			</thead>
-			<tr>
-				<td style="width:auto;">Indicator Definition:</td>
-				<td>Fresh stillbirth per 1,000 deliveries in health facilities is a Per
-					1000 indicator, with the numerator described as Number of fresh
-					stillbirths and denominator described as Number of deliveries in health
-					facilities.</td>
-			</tr>
-			<tr>
-				<td>Numerator:</td>
-				<td>Number of Fresh still births in a facility.</td>
-			</tr>
-			<tr>
-				<td>Denominator:</td>
-				<td>Number of deliveries in health facilities.</td>
-			</tr>
-			<tr>
-				<td>Indicator Rationale:</td>
-				<td>Fresh still birth is a direct measure of ANC and intrapartum care. Some can be prevented by
-					effective antenatal and delivery services.</td>
-			</tr>
+	<!-- end of sixth indicator -->
 
-		</table>
-	</div>
-	<div id="nationalGraphIu3Kvklc2Lr" style="width: auto; height: auto;"></br></div>
-
-	<button chartId="graphIu3Kvklc2Lr" class="btn chart-reset">reset dataset </button>
-	<button chartId="graphIu3Kvklc2Lr" class="btn chart-toggle">toggle dataset</button>
-	<div id="graphIu3Kvklc2Lr" style="width: auto; height: auto;"></br></div>
-	<div class="table-responsive-sm">
-		</br></br>
-		<table class="table table-striped table-bordered table-hover" id="table1">
-			<thead id="theadIu3Kvklc2Lr">
-
-			</thead>
-			<tbody id="tbodyIu3Kvklc2Lr">
-
-			</tbody>
-
-		</table>
-	</div>
-	<!-- end of 9th indicator -->
-
-	<!-- Begining of 10th indicator -->
-	<h2 style="page-break-before: always;" id="indicator_10">10. Percentage of women who had (pre)Eclampsia (Ecl) who
-		received anticonvulsants in a facility in that month.</h2>
-	<div class="table-responsive-sm">
-		<table class="table table-striped table-bordered table-hover">
-			<thead class="thead-dark">
-				<th>Item</th>
-				<th>Description</th>
-			</thead>
-			<tr>
-				<td style="width:auto;">Indicator Definition:</td>
-				<td>Women who received anticonvulsants as a percentage of pre-eclampsia and eclampsia.</td>
-			</tr>
-			<tr>
-				<td>Numerator:</td>
-				<td>Number of women who received anticonvulsants in a month.</td>
-			</tr>
-			<tr>
-				<td>Denominator:</td>
-				<td>Number of women diagnosed with (Pre-) Eclampsia</td>
-			</tr>
-			<tr>
-				<td>Indicator Rationale:</td>
-				<td>This indicator measures the quality of care for women with Hypertensive disorders. At the same time
-					it can inform the availability and use of anticonvulsants at facility level.</td>
-			</tr>
-
-		</table>
-	</div>
-	<div id="nationalGraphTYxFPG4Pt3L" style="width: auto; height: auto;"></br></div>
-
-	<button chartId="graphTYxFPG4Pt3L" class="btn chart-reset">reset dataset </button>
-	<button chartId="graphTYxFPG4Pt3L" class="btn chart-toggle">toggle dataset</button>
-	<div id="graphTYxFPG4Pt3L" style="width: auto; height: auto;"></br></div>
-	<div class="table-responsive-sm">
-		</br></br>
-		<table class="table table-striped table-bordered table-hover" id="table1">
-			<thead id="theadTYxFPG4Pt3L">
-
-			</thead>
-			<tbody id="tbodyTYxFPG4Pt3L">
-
-			</tbody>
-
-		</table>
-	</div>
-	<!-- end of 10th indicator -->
-
-	<!-- Begining of 11th indicator -->
-	<h2 style="page-break-before: always;" id="indicator_11">11. percentage of women with premature labour receiving
-		antenatal corticosteroids per month</h2>
-	<div class="table-responsive-sm">
-		<table class="table table-striped table-bordered table-hover">
-			<thead class="thead-dark">
-				<th>Item</th>
-				<th>Description</th>
-			</thead>
-			<tr>
-				<td style="width:auto;">Indicator Definition:</td>
-				<td>women receiving antenatal corticosteroids as a percentage of prematurity newborn complications.
-				</td>
-			</tr>
-			<tr>
-				<td>Numerator:</td>
-				<td>women receiving antenatal corticosteroids.</td>
-			</tr>
-			<tr>
-				<td>Denominator:</td>
-				<td>Total number of newborn prematurity complications.</td>
-			</tr>
-			<tr>
-				<td>Indicator Rationale:</td>
-				<td>Prematurity is one major contributing factor to Neonatal deaths. Administration of antenatal
-					corticosteroids improves the survival rate of premature babies</td>
-			</tr>
-
-		</table>
-	</div>
-	<div id="nationalGraphROmO4feSepr" style="width: auto; height: auto;"></br></div>
-
-	<button chartId="graphROmO4feSepr" class="btn chart-reset">reset dataset </button>
-	<button chartId="graphROmO4feSepr" class="btn chart-toggle">toggle dataset</button>
-	<div id="graphROmO4feSepr" style="width: auto; height: auto;"></br></div>
-	<div class="table-responsive-sm">
-		</br></br>
-		<table class="table table-striped table-bordered table-hover" id="table1">
-			<thead id="theadROmO4feSepr">
-
-			</thead>
-			<tbody id="tbodyROmO4feSepr">
-
-			</tbody>
-
-		</table>
-	</div>
-	<!-- end of 11th indicator -->
-
-	<!-- Begining of 12th indicator -->
-	<h2 style="page-break-before: always;" id="indicator_12">12. Percentage of babies with asphyxia successfully
+	<!-- Begining of 7th indicator -->
+	<h2 style="page-break-before: always;" id="indicator_7">7. Percentage of babies with asphyxia successfully
 		resuscitated</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
@@ -1305,10 +1067,115 @@
 
 		</table>
 	</div>
-	<!-- end of 12th indicator -->
 
-	<!-- Begining of 13th indicator -->
-	<h2 style="page-break-before: always;" id="indicator_13">13. Percentage of babies receiving tetracycline eye
+	<!-- end of 7th indicator -->
+
+	<!-- Begining of 8th indicator -->
+	<h2 style="page-break-before: always;" id="indicator_8">8. Institutional Neonatal Mortality Rate (per 1000)</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Number of deaths during the first 28 completed days of life per 1000 live births, as reported in
+					HMIS, in each period.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of newborns who died during the first 28 days of life in health facilities.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of live births recorded in the same period in health facilities ( <br />
+				</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Mortality during the neonatal period accounts for a large proportion of child deaths. Some can be
+					prevented by effective antenatal, delivery and postnatal care to women and proper care to newborns.
+					This indicator measures the quality of these services at the facility level.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphXB99D7VxRo6" style="width: auto; height: auto;"></br></div>
+
+	<button chartId="graphXB99D7VxRo6" class="btn chart-reset">reset dataset </button>
+	<button chartId="graphXB99D7VxRo6" class="btn chart-toggle">toggle dataset</button>
+	<div id="graphXB99D7VxRo6" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadXB99D7VxRo6">
+
+			</thead>
+			<tbody id="tbodyXB99D7VxRo6">
+
+			</tbody>
+
+		</table>
+	</div>
+
+	<!-- end of 8th indicator -->
+
+	<!-- Begining of 9th indicator -->
+	<h2 style="page-break-before: always;" id="indicator_9">9. Percentage of newborns started on breastfeeding within 60
+		minutes of birth
+	</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Number of newborns starting breast feeding within 60mins of birth expressed as a percentage of total
+					number of babies.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of newborns Breastfeeding Initiated within 60 mins.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of newborns born in that facility in that month.</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Early initiation of breastfeeding within 60mins ensures that the newborns receive colostrum, or
+					“first milk”, which is rich in protective factors.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphuiKagpdRIX9" style="width: auto; height: auto;"></br></div>
+
+	<button chartId="graphuiKagpdRIX9" class="btn chart-reset">reset dataset </button>
+	<button chartId="graphuiKagpdRIX9" class="btn chart-toggle">toggle dataset</button>
+	<div id="graphuiKagpdRIX9" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theaduiKagpdRIX9">
+
+			</thead>
+			<tbody id="tbodyuiKagpdRIX9">
+
+			</tbody>
+
+		</table>
+	</div>
+
+
+
+	<!-- end of 9th indicator -->
+
+	<!-- Begining of 10th indicator -->
+	<h2 style="page-break-before: always;" id="indicator_10">10. Percentage of babies receiving tetracycline eye
 		ointment(TEO) for all
 		live births</h2>
 	<div class="table-responsive-sm">
@@ -1354,11 +1221,11 @@
 
 		</table>
 	</div>
-	<!-- end of 13th indicator -->
 
-	<!-- Begining of 14th indicator -->
-	<h2 style="page-break-before: always;" id="indicator_14">14. Percentage of deliveries by skilled birth attendants
-	</h2>
+	<!-- end of 10th indicator -->
+
+	<!-- Begining of 11th indicator -->
+	<h2 style="page-break-before: always;" id="indicator_11";>11. Fresh stillbirth per 1,000 deliveries in health facilities</h2>
 	<div class="table-responsive-sm">
 		<table class="table table-striped table-bordered table-hover">
 			<thead class="thead-dark">
@@ -1367,39 +1234,187 @@
 			</thead>
 			<tr>
 				<td style="width:auto;">Indicator Definition:</td>
-				<td>Number of deliveries by skilled birth attendants expressed as a percentage of total number of
-					deliveries.</td>
+				<td>Fresh stillbirth per 1,000 deliveries in health facilities is a Per
+					1000 indicator, with the numerator described as Number of fresh
+					stillbirths and denominator described as Number of deliveries in health
+					facilities.</td>
 			</tr>
 			<tr>
 				<td>Numerator:</td>
-				<td>Number of deliveries by skilled birth attendants.</td>
+				<td>Number of Fresh still births in a facility.</td>
 			</tr>
 			<tr>
 				<td>Denominator:</td>
-				<td>Total number of deliveries.</td>
+				<td>Number of deliveries in health facilities.</td>
 			</tr>
 			<tr>
 				<td>Indicator Rationale:</td>
-				<td>Complications during pregnancy and childbirth are a leading cause of death and disability among
-					women of reproductive age in Malawi. Access to skilled care during childbirth is a key strategy to
-					reduce both maternal and neonatal deaths. Maternal mortality itself can be very difficult to
-					measure, making it critical to track related indicators.</td>
+				<td>Fresh still birth is a direct measure of ANC and intrapartum care. Some can be prevented by
+					effective antenatal and delivery services.</td>
 			</tr>
 
 		</table>
 	</div>
-	<div id="nationalGraphHzlM2yb4004" style="width: auto; height: auto;"></br></div>
-
-	<button chartId="graphHzlM2yb4004" class="btn chart-reset">reset dataset </button>
-	<button chartId="graphHzlM2yb4004" class="btn chart-toggle">toggle dataset</button>
-	<div id="graphHzlM2yb4004" style="width: auto; height: auto;"></br></div>
+	<div id="nationalGraphIu3Kvklc2Lr" style="width: auto; height: auto;"></br></div>
+	<div id="graphIu3Kvklc2Lr" style="width: auto; height: auto;"></br></div>
 	<div class="table-responsive-sm">
 		</br></br>
 		<table class="table table-striped table-bordered table-hover" id="table1">
-			<thead id="theadHzlM2yb4004">
+			<thead id="theadIu3Kvklc2Lr">
 
 			</thead>
-			<tbody id="tbodyHzlM2yb4004">
+			<tbody id="tbodyIu3Kvklc2Lr">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of 11th indicator -->
+
+	<!-- Begining of 12th indicator -->
+	<h2 style="page-break-before: always;" id="indicator_12">12. Percentage of women who had (pre)Eclampsia (Ecl) who
+		received anticonvulsants in a facility in that month.</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Women who received anticonvulsants as a percentage of pre-eclampsia and eclampsia.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of women who received anticonvulsants in a month.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Number of women diagnosed with (Pre-) Eclampsia</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>This indicator measures the quality of care for women with Hypertensive disorders. At the same time
+					it can inform the availability and use of anticonvulsants at facility level.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphTYxFPG4Pt3L" style="width: auto; height: auto;"></br></div>
+
+	<button chartId="graphTYxFPG4Pt3L" class="btn chart-reset">reset dataset </button>
+	<button chartId="graphTYxFPG4Pt3L" class="btn chart-toggle">toggle dataset</button>
+	<div id="graphTYxFPG4Pt3L" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadTYxFPG4Pt3L">
+
+			</thead>
+			<tbody id="tbodyTYxFPG4Pt3L">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of 12th indicator -->
+
+	<!-- Begining of 13th indicator -->
+	<h2 style="page-break-before: always;" id="indicator_13">13. percentage of women with premature labour receiving
+		antenatal corticosteroids per month</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>women receiving antenatal corticosteroids as a percentage of prematurity newborn complications.
+				</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>women receiving antenatal corticosteroids.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of newborn prematurity complications.</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Prematurity is one major contributing factor to Neonatal deaths. Administration of antenatal
+					corticosteroids improves the survival rate of premature babies</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphROmO4feSepr" style="width: auto; height: auto;"></br></div>
+
+	<button chartId="graphROmO4feSepr" class="btn chart-reset">reset dataset </button>
+	<button chartId="graphROmO4feSepr" class="btn chart-toggle">toggle dataset</button>
+	<div id="graphROmO4feSepr" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadROmO4feSepr">
+
+			</thead>
+			<tbody id="tbodyROmO4feSepr">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of 13th indicator -->
+
+	<!-- Begining of 14th indicator -->
+	<h2 style="page-break-before: always;" id="indicator_14">14. Institutional Maternal Mortality Ratio (per 100,000
+		deliveries in a
+		facility)</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Institutional Maternal Mortality Ratio (per 100,000 deliveries in a facility) is a Per 100,000
+					indicator, with the numerator described as Number of Maternal deaths in health facilities and
+					denominator described as Number of deliveries in health facilities.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of Maternal deaths in a health facility.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td></b> Number of deliveries in health facilities<br />
+				</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>This indicator is a measure of women's encounter with the health personnel. It is assumed that the
+					targeted visits would give the women an opportunity to access a full package of ANC interventions.
+					The visits would also assist the health providers to identify complications on time and address
+					them.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphRKw1hU7nde2" style="width: auto; height: auto;"></br></div>
+
+	<button chartId="graphRKw1hU7nde2" class="btn chart-reset">reset dataset </button>
+	<button chartId="graphRKw1hU7nde2" class="btn chart-toggle">toggle dataset</button>
+	<div id="graphRKw1hU7nde2" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadRKw1hU7nde2">
+
+			</thead>
+			<tbody id="tbodyRKw1hU7nde2">
 
 			</tbody>
 
