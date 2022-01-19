@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html>
+
+</html>
+
+<head>
+	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">  -->
+	<!-- Jquery Library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<!-- Highcharts -->
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/data.js"></script>
+	<!-- end of code for drawing -->
+	<style type="text/css">
+		body {
+			background-size: 1100px 1500px;
+		}
+
+		.section {
+			border-bottom: 1px solid #ccc;
+			margin-bottom: 50px;
+			padding-bottom: 50px;
+			width: 930px;
+			font-size: 15px;
+		}
+
+		.links {
+			font-size: 15px;
+			margin-left: 30px;
+		}
+
+		div.background {
+			background: url(https://i.ibb.co/r0cFDLC/MNH-MNH-Cover-page.png) no-repeat;
+			background-size: 1100px 1500px;
+			border: 1px solid black;
+			height: 1500px;
+			width: 1100px;
+		}
+
+		div.transbox {
+			margin: 1200px 200px 300px 200px;
+			position: relative;
+			bottom: 10px;
+			/*background-color: #ffffff;*
+            border: 1px solid black;*/
+			opacity: 0.6;
+			filter: alpha(opacity=60);
+		}
+
+		div.transbox p {
+			margin: 5%;
+			font-weight: bold;
+			color: #ffffff;
+			font-size: 40px;
+		}
+
+		@media print {
+			body {
+				-webkit-print-color-adjust: exact;
+			}
+		}
+
+		tbody tr:nth-child(odd) {
+			background-color: #f7f5f0;
+		}
+
+		table,
+		td,
+		th {
+			border: 1px black solid;
+		}
+
+		table {
+			border-collapse: collapse;
+		}
+	</style>
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+			function getNationalData(orgUnit, indicators = [], periods = []) {
+				var orgUnitsText = orgUnit.id
+
+				var indicatorsText = indicators.reduce(function (acc, c) {
+					return acc.length > 0 ? acc + ";" + c : c;
+				}, "");
+
+				var periodsText = periods.reduce(function (acc, c) {
+					return acc.length > 0 ? acc + ";" + c : c;
+				}, "");
+
+				var requestUrl =
+					"../api/analytics?dimension=ou:" +
+					orgUnitsText + "&dimension=dx:" +
+					indicatorsText +
+					"&dimension=pe:" +
+					periodsText;
+				return fetch(requestUrl).then(function (response) {
+					return response.json();
+				});
+			}
+
+			function getData(orgUnits, indicators = [], periods = [], reportingRates = []) {
+				var orgUnitsText = orgUnits.reduce(function (acc, c) {
+					return acc.length > 0 ? acc + ";" + c : c;
+				}, "");
+				var indicatorsText = indicators.reduce(function (acc, c) {
+					return acc.length > 0 ? acc + ";" + c : c;
+				}, "");
+				var periodsText = periods.reduce(function (acc, c) {
+					return acc.length > 0 ? acc + ";" + c : c;
+				}, "");
+				var reportingRatesText = reportingRates.reduce(function (acc, c) {
+					return acc.length > 0 ? acc + ";" + c : c;
+				}, "");
+				var requestUrl =
+					"../api/analytics?dimension=ou:" +
+					orgUnitsText + "&dimension=dx:" +
+					indicatorsText + ";" + reportingRatesText +
+					"&dimension=pe:" +
+					periodsText;
+				return fetch(requestUrl).then(function (response) {
+					return response.json();
+				});
+			}
+
+			function printData(
+				parentOrganisationUnit,
+				nationalData,
+				data,
+				orgUnits,
+				indicators = [],
+				periods = [],
+				reportingRates = []
+			) {
+				for (indicator of indicators) {
+					try {
+						printDataForindicator(
+							parentOrganisationUnit,
+							nationalData,
+							data,
+							orgUnits,
+							indicator,
+							indicators,
+							periods,
+							reportingRates
+						)
+					} catch (error) {
+						console.log(error)
+					}
+
+
+				}
+			}
+
+			function getYearMonth(date) {
+				const year = date.slice(0, 4);
+				const month = date.slice(4, 6);
+				const day = date.slice(6);
+				return { year, month, day };
+			}
+
+			const getPast6Months = (date) => {
+				let dates = [];
+				let selectedMonth = Number(date.split("-")[1]);
+				let selectedYear = Number(date.split("-")[0]);
+				for (let numMonths = 0; numMonths < 6; numMonths++) {
+					if (selectedMonth == 1) {
+						selectedMonth = 12;
+						selectedYear = selectedYear - 1;
+					} else {
+						selectedMonth = selectedMonth - 1;
+					}
+					const displayMonth =
+						selectedMonth < 10 ? "0" + selectedMonth : selectedMonth;
+					dates = [...dates, selectedYear + "" + displayMonth];
+				}
+				return dates.reverse();
+			};
+
+			function printDataForindicator(
+				parentOrganisationUnit,
+				nationalData,
+				data,
+				orgUnits,
+				indicator,
+				indicators,
+				periods,
+				reportingRates
+			) {
+				let nationalSeries = []
+				let series = [];
+				let tableRows = [];
+
+				// national graph
+
+				const nationalDt = nationalData.rows.filter((r) => r[0] == indicator);
+
+				nationalSeries = [
+					...nationalSeries,
+					{
+						name: nationalData.metaData.items[`${parentOrganisationUnit.id}`].name,
+						data: periods.map((p) => {
+							const value = nationalDt.find(d => d[2] == p)
+							return !value || value[3] == "" ? 0 : Number(value[3])
+						})
+					},
+				];
+
+				// graph
+
+
+				for (const orgUnit of orgUnits) {
+					const dt = data.rows.filter((r) => r[0] == indicator && orgUnit == r[1]);
+
+					series = [
+						...series,
+						{
+							name: data.metaData.items[`${orgUnit}`].name,
+							data: periods.map((p) => {
+								const value = dt.find(d => d[2] == p)
+								return !value || value[3] == "" ? 0 : Number(value[3])
+							})
+						},
+					];
+				}
+
+				// table data
+				for (const orgUnit of orgUnits) {
+
+					let row = [data.metaData.items[`${orgUnit}`].name];
+
+					for (const period of periods) {
+						const filterByPeriod = data.rows.filter(
+							(r) => r[2] == period && r[1] == orgUnit
+						);
+						const repRate = () => {
+							const repR = filterByPeriod.find(r => r[0] == reportingRates[indicators.indexOf(indicator)])
+							return repR && repR[3] != "" ? repR[3] : ""
+						}
+						const daEl = () => {
+							const da = filterByPeriod.find(r => r[0] == indicator)
+							return da && da[3] != "" ? da[3] : ""
+						}
+						// console.log({f:filterByPeriod[index+indicators.length],filterByPeriod})
+						if (reportingRates[indicators.indexOf(indicator)].length > 0) row = [
+							...row,
+							repRate(),
+						];
+						row = [
+							...row,
+							daEl(),
+						];
+					}
+
+					tableRows = [...tableRows, row];
+				}
+				//   chart
+				//begin code for displaying graph
+				var chartOptions = {
+					chart: {
+						type: 'column'
+					},
+					title: {
+						text: data.metaData.items[indicator].name
+					},
+					subtitle: {
+						text: 'Source: https://www.dhis2.health.gov.mw'
+					},
+					xAxis: {
+						categories: periods.map((p) => data.metaData.items[p].name),
+						title: {
+							text: "Period"
+						}
+					},
+					yAxis: {
+						min: 0,
+						title: {
+							text: '',
+							align: 'high'
+						},
+						labels: {
+							overflow: 'justify'
+						}
+					},
+					tooltip: {
+						valueSuffix: ' %'
+					},
+					plotOptions: {
+						bar: {
+							dataLabels: {
+								enabled: true
+							}
+						}
+					},
+					legend: {
+						align: 'center',
+						verticalAlign: 'bottom',
+						x: 0,
+						y: 10,
+						floating: false,
+						borderWidth: 1,
+
+						backgroundColor: (
+							(Highcharts.theme && Highcharts.theme.legendBackgroundColor) ||
+							'#FFFFFF'),
+						shadow: true
+					},
+					credits: {
+						enabled: false
+					},
+
+				}
+
+				$("#nationalGraph" + indicator).highcharts({
+					...chartOptions, title: {
+						text: "National " + data.metaData.items[indicator].name
+					}, series: nationalSeries, chart: { type: "line" }
+				})
+				$("#graph" + indicator).highcharts({ ...chartOptions, series });
+
+				// table
+				var tableheader = "<th>Org Unit </th>";
+				for (const period of periods) {
+					
+					if (reportingRates[indicators.indexOf(indicator)].length > 0)
+						tableheader += "<th style='background-color:#FCF3CF;'>" + data.metaData.items[period].name + " " + data.metaData.items[reportingRates[indicators.indexOf(indicator)]].name + "</th>";
+					tableheader += "<th>" + data.metaData.items[period].name + " " + data.metaData.items[indicator].name + "</th>";
+
+				}
+
+				document.getElementById("thead" + indicator).innerHTML = tableheader;
+
+				var tableContent = ""
+				for (const tableRow of tableRows) {
+					tableContent += "<tr>";
+					tableRow.forEach((d, index) => {
+						if (index % 2 == 0) {
+							tableContent += "<td >" + d + "</td>";
+						} else {
+							tableContent += "<td style='background-color:#FCF3CF;'>" + d + "</td>";
+						}
+
+					})
+					tableContent += "</tr>";
+				}
+				document.getElementById("tbody" + indicator).innerHTML = tableContent;
+			}
+
+
+			//function
+			function myMainfunction() {
+				var date = dhis2.report.date;
+				var organisationUnit = dhis2.report.organisationUnit;
+				var organisationUnitChildren = dhis2.report.organisationUnitChildren;
+				var organisationUnitLevel = dhis2.report.organisationUnitHierarchy.length;
+				var parentOrganisationUnit = dhis2.report.organisationUnitHierarchy[dhis2.report.organisationUnitHierarchy.length - 1]
+				var organisationUnits = organisationUnitLevel == 4 ? [organisationUnit.id] : [organisationUnit.id].concat(organisationUnitChildren.map(ou => ou.id));
+				var periods = getPast6Months(date)
+
+				//    provide the indicator ids and the reporting rates indicator ids:
+				//    make sure the reporting rate indicators are aligned with the indicator its reporting on
+				//    have a block for each indicator in the body and put ids example ({tbody}{indicatorId})
+
+				const indicators = ["Td1Xx7s30cG", "y9j9riaQUms", "jrg8XgstsT9", "Pqh9eXP3TiG", "JuvxwMmblVe", "RKw1hU7nde2", "XB99D7VxRo6", "uiKagpdRIX9", "Iu3Kvklc2Lr", "TYxFPG4Pt3L", "ROmO4feSepr", "VPUVhda1Edt", "FW4aXtWhJfH", "HzlM2yb4004", "miFBHaP3ANN", "x7WQ21wOm8f", "yWKcCcVQKGN", "GcEmeGrU0Wf", "qwBuUIbDUwl", "pBXqm3Bbbxd", "WDLOyb5bwZs", "gD11zdrJkSb", "t65pt8tACL9"]
+				const reportingRates = ["xfFteQ8O9ni", "xfFteQ8O9ni", "xfFteQ8O9ni", "xfFteQ8O9ni", "xfFteQ8O9ni", "o4PXgfBZlXf", "o4PXgfBZlXf", "o4PXgfBZlXf", "o4PXgfBZlXf", "o4PXgfBZlXf", "o4PXgfBZlXf", "xfFteQ8O9ni", "o4PXgfBZlXf", "o4PXgfBZlXf", "", "", "", "", "", "", "", "", ""]
+
+				getData(organisationUnits, indicators, periods, reportingRates).then((res) => {
+					const coverPageDisplay = organisationUnit.name + "</br>" + res.metaData.items[periods[0]].name + " - " + res.metaData.items[periods[periods.length - 1]].name;
+					document.getElementById("myText").innerHTML = coverPageDisplay;
+					getNationalData(parentOrganisationUnit, indicators, periods).then(function (resNational) {
+						printData(parentOrganisationUnit, resNational, res, organisationUnits, indicators, periods, reportingRates)
+					})
+
+				});
+			}
+
+			myMainfunction();
+		})
+	</script>
+</head>
+
+<body>
+	<div class="background">
+		<div class="transbox">
+			<p style="text-align: center;"><span id="myText"></span></p>
+		</div>
+	</div>
+	<br />
+	<br />
+	<br />
+
+	<h2><u>Section I: Antenatal Care (ANC)</u></h2>
+	<!-- Begining of first indicator -->
+	<h2>1. Percentage of mothers with at least 5 antenatal visits in a cohort</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Number of women with 5 ANC visits and above in a cohort expressed as a percentage in a cohort.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of mothers with at least 5 antenatal visits in a cohort</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of pregnant women in a cohort</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>This indicator is a measure of women's encounter with the health personnel. It is assumed that the
+					targeted visits would give the women an opportunity to access a full package of ANC interventions.
+					The visits would also assist the health providers to identify complications on time and address
+					them.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphTd1Xx7s30cG" style="width: auto; height: auto;"></br></div>
+	<div id="graphTd1Xx7s30cG" style="width: auto; height: auto;"></br></div>
+	<!-- style = "width: 550px; height: 400px; margin: 0 auto"-->
+	<!-- make the table  for the  first indicator-->
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadTd1Xx7s30cG">
+
+			</thead>
+			<tbody id="tbodyTd1Xx7s30cG">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of first indicator -->
+
+	<!-- Begining of second indicator -->
+
+
+	<h2 style="page-break-before: always;">2. Percentage of mothers receiving at least 2 TTV doses in a cohort. </h2>
+
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Number of women with 5 ANC visits and above in a cohort expressed as a percentage in a cohort.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of mothers with at least 5 antenatal visits in a cohort</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of pregnant women in a cohort</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>This indicator is a measure of women's encounter with the health personnel. It is assumed that the
+					targeted visits would give the women an opportunity to access a full package of ANC interventions.
+					The visits would also assist the health providers to identify complications on time and address
+					them.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphy9j9riaQUms" style="width: 100%; height: auto;"></br></div>
+	<div id="graphy9j9riaQUms" style="width: 100%; height: auto;"></br></div>
+	<!-- style = "width: 550px; height: 400px; margin: 0 auto"-->
+	<!-- make the table  for the  first indicator-->
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theady9j9riaQUms">
+
+			</thead>
+			<tbody id="tbodyy9j9riaQUms">
+
+			</tbody>
+
+		</table>
+	</div>
+
+	<div class="section" id="ancpivot3">
+		<!-- Table: Percentage of mothers receiving at least 2 ttv doses -->
+	</div>
+	<div class="section">
+		<!-- <h4>ANC: Percentage of women receiving at least 2 doses of TTV</h4> -->
+		<img id="ancchart3">
+	</div>
+	<!-- end of Second indicator -->
+
+	<!-- Begining of Third indicator -->
+	<h2 style="page-break-before: always;">3. Percentage of women undergoing pregnancy test in a cohort</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Number of women that have tested for pregnancy expressed as a percentage based on total number in a
+					cohort.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of women undergoing pregnancy test in a cohort.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of pregnant women in a cohort</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Testing women for pregnancy helps to enroll women who have not yet showed signs of pregnancy
+					physically in antenatal. This test would increase ANC enrollment in first trimester.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphjrg8XgstsT9" style="width: auto; height: auto;"></br></div>
+	<div id="graphjrg8XgstsT9" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadjrg8XgstsT9">
+
+			</thead>
+			<tbody id="tbodyjrg8XgstsT9">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of Third indicator -->
+	<!-- Begining of fourth indicator -->
+	<h2 style="page-break-before: always;">4. Percentage of women undergoing syphilis test in a cohort</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>women undergoing syphilis test expressed as a percentage in a cohort.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of women that have received syphilis test in a cohort</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of pregnant women in a cohort</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Tracking this indicator is important as it informs decisions on quality of care at a point of care
+					in a facility.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphPqh9eXP3TiG" style="width: auto; height: auto;"></br></div>
+	<div id="graphPqh9eXP3TiG" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadPqh9eXP3TiG">
+
+			</thead>
+			<tbody id="tbodyPqh9eXP3TiG">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of fourth indicator -->
+
+	<!-- Begining of fifth indicator -->
+	<h2 style="page-break-before: always;">5. Percentage of mothers receiving atleast 3 doses of SP in a cohort</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Total number of mothers receiving 3 or more doses of SP expressed as a percentage in a cohort.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of mothers with at least 5 antenatal visits in a cohort.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of mothers in a cohort.</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>As required by MoH policy , all pregnant women should receive at least 3 doses of
+					sulphadoxine-pyrimethamine (SP) for Malaria prevention.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphJuvxwMmblVe" style="width: auto; height: auto;"></br></div>
+	<div id="graphJuvxwMmblVe" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadJuvxwMmblVe">
+
+			</thead>
+			<tbody id="tbodyJuvxwMmblVe">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of Fifth indicator -->
+	<h2 style="page-break-before: always;"><u>Section II: Maternity</u></h2>
+	<!-- Begining of 6th indicator -->
+	<h2 style="page-break-before: always;">6. Institutional Maternal Mortality Ratio (per 100,000 deliveries in a
+		facility)</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Institutional Maternal Mortality Ratio (per 100,000 deliveries in a facility) is a Per 100,000
+					indicator, with the numerator described as Number of Maternal deaths in health facilities and
+					denominator described as Number of deliveries in health facilities.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of Maternal deaths in a health facility.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td></b> Number of deliveries in health facilities. NB: <br /> <b>Denominator: </b> (
+					Maternity
+					Monthly Report (“RHD MAT Survival/Survival Alive
+					not HIV exp” + “RHD MAT Survival/Survival Alive Exp No NVP” + “RHD MAT Survival/Survival Alive NVP
+					Started” ” + “RHD MAT Survival/Survival Alive unknown Exp” + “RHD MAT Survival/Survival Alive
+					Neonatal death”)
+					OR
+					<br /> <b>Denominator: </b> HMIS 15 (“HMIS Total # of Live births”) + HMIS 17 (“HMIS 17 Live
+					Births”)
+					(Note: This data is also available through MDSR, IDSR, and the Maternal and Neonatal Death Report.
+					Data should be triangulated on a regular basis)).
+					<br /> <b>Indicator Rationale: </b> Maternal death is a direct measure of quality of care. Analysis
+					of this data can inform health personnel on critical areas that need to be addressed.
+					Maternal death audit reports provide reliable data to track maternal deaths monthly.</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>This indicator is a measure of women's encounter with the health personnel. It is assumed that the
+					targeted visits would give the women an opportunity to access a full package of ANC interventions.
+					The visits would also assist the health providers to identify complications on time and address
+					them.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphRKw1hU7nde2" style="width: auto; height: auto;"></br></div>
+	<div id="graphRKw1hU7nde2" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadRKw1hU7nde2">
+
+			</thead>
+			<tbody id="tbodyRKw1hU7nde2">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of sixth indicator -->
+
+	<!-- Begining of 7th indicator -->
+	<h2 style="page-break-before: always;">7. Institutional Neonatal Mortality Rate (per 1000)</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Number of deaths during the first 28 completed days of life per 1000 live births, as reported in
+					HMIS, in each period.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of infants who died during the first 28 days of life in health facilities.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of live births recorded in the same period in health facilities ( <br />
+					<b>Denominator: </b> Maternity Clinic Monthly Reporting Form (“RHD MAT Newborn Survival/PMTCT Alive
+					not HIV Exp + RHD MAT Newborn Survival/PMTCT Alive Exp no NVP + RHD MAT Newborn Survival/PMTCT Alive
+					NVP Started + RHD MAT Newborn Survival/PMTCT Alive Unknown Exp + RHD MAT Newborn Survival/PMTCT
+					Alive Neonatal Death”)
+					Or
+					<br /> <b>Denominator: </b> HMIS 15 (“HMIS Total # of Live birth”) + HMIS 17 Monthly Reporting Form
+					(“HMIS 17 Live birth”) ).</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Mortality during the neonatal period accounts for a large proportion of child deaths. Some can be
+					prevented by effective antenatal, delivery and postnatal care to women and proper care to newborns.
+					This indicator measures the quality of these services at the facility level.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphXB99D7VxRo6" style="width: auto; height: auto;"></br></div>
+	<div id="graphXB99D7VxRo6" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadXB99D7VxRo6">
+
+			</thead>
+			<tbody id="tbodyXB99D7VxRo6">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of 7th indicator -->
+
+	<!-- Begining of 8th indicator -->
+	<h2 style="page-break-before: always;">8. Percentage of babies started on breastfeeding within 60 minutes of birth
+	</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Number of babies starting breast feeding within 60mins of birth expressed as a percentage of total
+					number of babies.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of babies Breastfeeding Initiated within 60 mins.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of babies born in that facility in that month.</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Early initiation of breastfeeding within 60mins ensures that the infant receives colostrum, or
+					“first milk”, which is rich in protective factors.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphuiKagpdRIX9" style="width: auto; height: auto;"></br></div>
+	<div id="graphuiKagpdRIX9" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theaduiKagpdRIX9">
+
+			</thead>
+			<tbody id="tbodyuiKagpdRIX9">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of 8th indicator -->
+
+	<!-- Begining of 9th indicator -->
+	<h2 style="page-break-before: always;">9. Fresh stillbirth per 1,000 deliveries in health facilities</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Fresh stillbirth per 1,000 deliveries in health facilities is a Per
+					1000 indicator, with the numerator described as Number of fresh
+					stillbirths and denominator described as Number of deliveries in health
+					facilities.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of Fresh still births in a facility.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Number of deliveries in health facilities.</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Fresh still birth is a direct measure of ANC and intrapartum care. Some can be prevented by
+					effective antenatal and delivery services.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphIu3Kvklc2Lr" style="width: auto; height: auto;"></br></div>
+	<div id="graphIu3Kvklc2Lr" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadIu3Kvklc2Lr">
+
+			</thead>
+			<tbody id="tbodyIu3Kvklc2Lr">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of 9th indicator -->
+
+	<!-- Begining of 10th indicator -->
+	<h2 style="page-break-before: always;">10. Percentage of mothers who had (pre)Eclampsia (Ecl) who received
+		anticonvulsants in a facility in that month.</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Mothers who received anticonvulsants as a percentage of pre-eclampsia and eclampsia.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of Mothers who received anticonvulsants in a month.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Maternity monthly report.</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>This indicator measures the quality of care for women with Hypertensive disorders. At the same time
+					it can inform the availability and use of anticonvulsants at facility level.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphTYxFPG4Pt3L" style="width: auto; height: auto;"></br></div>
+	<div id="graphTYxFPG4Pt3L" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadTYxFPG4Pt3L">
+
+			</thead>
+			<tbody id="tbodyTYxFPG4Pt3L">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of 10th indicator -->
+
+	<!-- Begining of 11th indicator -->
+	<h2 style="page-break-before: always;">11. Percentage of Mothers receiving antenatal corticosteroids in a facility
+		per month</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Mothers receiving antenatal corticosteroids as a percentage of prematurity newborn complications.
+				</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Mothers receiving antenatal corticosteroids.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of newborn prematurity complications.</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Prematurity is one major contributing factor to Neonatal deaths. Administration of antenatal
+					corticosteroids improves the survival rate of premature babies</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphROmO4feSepr" style="width: auto; height: auto;"></br></div>
+	<div id="graphROmO4feSepr" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadROmO4feSepr">
+
+			</thead>
+			<tbody id="tbodyROmO4feSepr">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of 11th indicator -->
+
+	<!-- Begining of 12th indicator -->
+	<h2 style="page-break-before: always;">12. Percentage of babies with asphyxia successfully resuscitated</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Number of successfully resuscitated asphyxiated babies as percentage based on total number of birth
+					asphyxia.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of asphyxiated babies successfully resuscitated (by drying and wrapping, clearing air way and
+					stimulation, bag and mask ventilation)</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of asphyxiated babies according to HBB report form.</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Asphyxia is one major contributing factor of Neonatal deaths. Measuring this indicator provide
+					insights into the quality of resuscitation interventions.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphVPUVhda1Edt" style="width: auto; height: auto;"></br></div>
+	<div id="graphVPUVhda1Edt" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadVPUVhda1Edt">
+
+			</thead>
+			<tbody id="tbodyVPUVhda1Edt">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of 12th indicator -->
+
+	<!-- Begining of 13th indicator -->
+	<h2 style="page-break-before: always;">13. Percentage of babies receiving tetracycline eye ointment(TEO) for all
+		live births</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Babies receiving TEO expressed as a percentage based on total number of live births.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of babies receiving TEO</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of live births.</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Neonates are prone to infections such as eye infections. Tetracycline application is vital in
+					preventing eye infections. This indicator provides insights on the quality of routine newborn care
+					and the usage of TEO at facility level.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphFW4aXtWhJfH" style="width: auto; height: auto;"></br></div>
+	<div id="graphFW4aXtWhJfH" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadFW4aXtWhJfH">
+
+			</thead>
+			<tbody id="tbodyFW4aXtWhJfH">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of 13th indicator -->
+
+	<!-- Begining of 14th indicator -->
+	<h2 style="page-break-before: always;">14. Percentage of deliveries by skilled birth attendants</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Number of deliveries by skilled birth attendants expressed as a percentage of total number of
+					deliveries.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Number of deliveries by skilled birth attendants.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>Total number of deliveries.</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Complications during pregnancy and childbirth are a leading cause of death and disability among
+					women of reproductive age in Malawi. Access to skilled care during childbirth is a key strategy to
+					reduce both maternal and neonatal deaths. Maternal mortality itself can be very difficult to
+					measure, making it critical to track related indicators.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphHzlM2yb4004" style="width: auto; height: auto;"></br></div>
+	<div id="graphHzlM2yb4004" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadHzlM2yb4004">
+
+			</thead>
+			<tbody id="tbodyHzlM2yb4004">
+
+			</tbody>
+
+		</table>
+	</div>
+	<!-- end of 14th indicator -->
+
+	<h2 style="page-break-before: always;"><u>Section III: Inventory / Supplies</u></h2>
+	<!-- Begining of 15th indicator -->
+	<h2 style="page-break-before: always;">15. Days of Stock outs of tetracycline (TEO)</h2>
+	<div class="table-responsive-sm">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>Item</th>
+				<th>Description</th>
+			</thead>
+			<tr>
+				<td style="width:auto;">Indicator Definition:</td>
+				<td>Stock outs of TEO, tracking this would help with making sure that there is continuous supply at the
+					facility.</td>
+			</tr>
+			<tr>
+				<td>Numerator:</td>
+				<td>Days of TEO stock out.</td>
+			</tr>
+			<tr>
+				<td>Denominator:</td>
+				<td>None</td>
+			</tr>
+			<tr>
+				<td>Indicator Rationale:</td>
+				<td>Tracing stock outs helps health personnel to store/order adequate amount of supplies to prevent
+					interruption of essential interventions.</td>
+			</tr>
+
+		</table>
+	</div>
+	<div id="nationalGraphmiFBHaP3ANN" style="width: auto; height: auto;"></br></div>
+	<div id="graphmiFBHaP3ANN" style="width: auto; height: auto;"></br></div>
+	<div class="table-responsive-sm">
+		</br></br>
+		<table class="table table-striped table-bordered table-hover" id="table1">
+			<thead id="theadmiFBHaP3ANN">
+
+			</thead>
+			<tbody id="tbodymiFBHaP3ANN">
+
+			</tbody>
+
+		</table>
+	</div>
+
+	<!-- end of 15th indicator -->
+
+	<!-- Beginning of 16th indicator -->
+	<h2 style="page-break-before: always;">
+		<h2 style="page-break-before: always;">16. Days of Stock outs of antibiotic (Metronidazole 200mg)</h2>
+		<div class="table-responsive-sm">
+			<table class="table table-striped table-bordered table-hover">
+				<thead class="thead-dark">
+					<th>Item</th>
+					<th>Description</th>
+				</thead>
+				<tr>
+					<td style="width:auto;">Indicator Definition:</td>
+					<td>Stock outs of antibiotic (Metronidazole 200mg). Tracking these drugs would help to ensure
+						facilities do not run out of stock of the antibiotics.</td>
+				</tr>
+				<tr>
+					<td>Numerator:</td>
+					<td>Days of Stock outs of antibiotics (Metronidazole 200mg).</td>
+				</tr>
+				<tr>
+					<td>Denominator:</td>
+					<td>None</td>
+				</tr>
+				<tr>
+					<td>Indicator Rationale:</td>
+					<td>Tracing stock outs helps health personnel to store/order adequate amount of supplies to prevent
+						interruption of essential interventions.</td>
+				</tr>
+
+			</table>
+		</div>
+		<div id="nationalGraphx7WQ21wOm8f" style="width: auto; height: auto;"></br></div>
+		<div id="graphx7WQ21wOm8f" style="width: auto; height: auto;"></br></div>
+		<div class="table-responsive-sm">
+			</br></br>
+			<table class="table table-striped table-bordered table-hover" id="table1">
+				<thead id="theadx7WQ21wOm8f">
+
+				</thead>
+				<tbody id="tbodyx7WQ21wOm8f">
+
+				</tbody>
+
+			</table>
+		</div>
+		<!-- end of 16th indicator -->
+		<!-- Beginning of 17th indicator -->
+		<h2 style="page-break-before: always;">
+			<h2 style="page-break-before: always;">17. Days of Stock outs of antibiotic (Metronidazole 250mg)</h2>
+			<div class="table-responsive-sm">
+				<table class="table table-striped table-bordered table-hover">
+					<thead class="thead-dark">
+						<th>Item</th>
+						<th>Description</th>
+					</thead>
+					<tr>
+						<td style="width:auto;">Indicator Definition:</td>
+						<td>Stock outs of antibiotic (Metronidazole 250mg). Tracking these drugs would help to ensure
+							facilities do not run out of stock of the antibiotics.</td>
+					</tr>
+					<tr>
+						<td>Numerator:</td>
+						<td>Days of Stock outs of antibiotics (Metronidazole 250mg).</td>
+					</tr>
+					<tr>
+						<td>Denominator:</td>
+						<td>None</td>
+					</tr>
+					<tr>
+						<td>Indicator Rationale:</td>
+						<td>Tracing stock outs helps health personnel to store/order adequate amount of supplies to
+							prevent interruption of essential interventions.</td>
+					</tr>
+
+				</table>
+			</div>
+			<div id="nationalGraphyWKcCcVQKGN" style="width: auto; height: auto;"></br></div>
+			<div id="graphyWKcCcVQKGN" style="width: auto; height: auto;"></br></div>
+			<div class="table-responsive-sm">
+				</br></br>
+				<table class="table table-striped table-bordered table-hover" id="table1">
+					<thead id="theadyWKcCcVQKGN">
+
+					</thead>
+					<tbody id="tbodyyWKcCcVQKGN">
+
+					</tbody>
+
+				</table>
+			</div>
+			<!-- end of 17th indicator -->
+			<!-- Beginning of 18th indicator -->
+			<h2 style="page-break-before: always;">
+				<h2 style="page-break-before: always;">18. Days of Stock outs of antibiotics (Gentamicin eye drops, 5ml)
+				</h2>
+				<div class="table-responsive-sm">
+					<table class="table table-striped table-bordered table-hover">
+						<thead class="thead-dark">
+							<th>Item</th>
+							<th>Description</th>
+						</thead>
+						<tr>
+							<td style="width:auto;">Indicator Definition:</td>
+							<td>Stock outs of antibiotic (Gentamicin eye drops, 5ml). Tracking these drugs would help to
+								ensure facilities do not run out of stock of the antibiotics.</td>
+						</tr>
+						<tr>
+							<td>Numerator:</td>
+							<td>Days of Stock outs of antibiotics (Gentamicin eye drops, 5ml).</td>
+						</tr>
+						<tr>
+							<td>Denominator:</td>
+							<td>None</td>
+						</tr>
+						<tr>
+							<td>Indicator Rationale:</td>
+							<td>Tracing stock outs helps health personnel to store/order adequate amount of supplies to
+								prevent interruption of essential interventions.</td>
+						</tr>
+
+					</table>
+				</div>
+				<div id="nationalGraphGcEmeGrU0Wf" style="width: auto; height: auto;"></br></div>
+				<div id="graphGcEmeGrU0Wf" style="width: auto; height: auto;"></br></div>
+				<div class="table-responsive-sm">
+					</br></br>
+					<table class="table table-striped table-bordered table-hover" id="table1">
+						<thead id="theadGcEmeGrU0Wf">
+
+						</thead>
+						<tbody id="tbodyGcEmeGrU0Wf">
+
+						</tbody>
+
+					</table>
+				</div>
+				<!-- end of 18th indicator -->
+				<!-- Beginning of 19th indicator -->
+				<h2 style="page-break-before: always;">
+					<h2 style="page-break-before: always;">19. Days of Stock outs of antibiotics (Gentamicin 40mg/ml,
+						2ml)</h2>
+					<div class="table-responsive-sm">
+						<table class="table table-striped table-bordered table-hover">
+							<thead class="thead-dark">
+								<th>Item</th>
+								<th>Description</th>
+							</thead>
+							<tr>
+								<td style="width:auto;">Indicator Definition:</td>
+								<td>Stock outs of antibiotic (Gentamicin 40mg/ml, 2ml). Tracking these drugs would help
+									to ensure facilities do not run out of stock of the antibiotics.</td>
+							</tr>
+							<tr>
+								<td>Numerator:</td>
+								<td>Days of Stock outs of antibiotics (Gentamicin 40mg/ml, 2ml).</td>
+							</tr>
+							<tr>
+								<td>Denominator:</td>
+								<td>None</td>
+							</tr>
+							<tr>
+								<td>Indicator Rationale:</td>
+								<td>Tracing stock outs helps health personnel to store/order adequate amount of supplies
+									to prevent interruption of essential interventions.</td>
+							</tr>
+
+						</table>
+					</div>
+					<div id="nationalGraphqwBuUIbDUwl" style="width: auto; height: auto;"></br></div>
+					<div id="graphqwBuUIbDUwl" style="width: auto; height: auto;"></br></div>
+					<div class="table-responsive-sm">
+						</br></br>
+						<table class="table table-striped table-bordered table-hover" id="table1">
+							<thead id="theadqwBuUIbDUwl">
+
+							</thead>
+							<tbody id="tbodyqwBuUIbDUwl">
+
+							</tbody>
+
+						</table>
+					</div>
+					<!-- end of 19th indicator -->
+					<!-- Begining of 20th indicator -->
+					<h2 style="page-break-before: always;">
+						<h2 style="page-break-before: always;">20. Days of Stock outs of antibiotic (ceftriaxone)</h2>
+						<div class="table-responsive-sm">
+							<table class="table table-striped table-bordered table-hover">
+								<thead class="thead-dark">
+									<th>Item</th>
+									<th>Description</th>
+								</thead>
+								<tr>
+									<td style="width:auto;">Indicator Definition:</td>
+									<td>Stock outs of antibiotics (ceftriaxone). Tracking these drugs would help to
+										ensure facilities do not run out of stock of the antibiotics.</td>
+								</tr>
+								<tr>
+									<td>Numerator:</td>
+									<td>Days of Stock outs of antibiotics (ceftriaxone).</td>
+								</tr>
+								<tr>
+									<td>Denominator:</td>
+									<td>None</td>
+								</tr>
+								<tr>
+									<td>Indicator Rationale:</td>
+									<td>Tracing stock outs helps health personnel to store/order adequate amount of
+										supplies to prevent interruption of essential interventions.</td>
+								</tr>
+
+							</table>
+						</div>
+						<div id="nationalGraphpBXqm3Bbbxd" style="width: auto; height: auto;"></br></div>
+						<div id="graphpBXqm3Bbbxd" style="width: auto; height: auto;"></br></div>
+						<div class="table-responsive-sm">
+							</br></br>
+							<table class="table table-striped table-bordered table-hover" id="table1">
+								<thead id="theadpBXqm3Bbbxd">
+
+								</thead>
+								<tbody id="tbodypBXqm3Bbbxd">
+
+								</tbody>
+
+							</table>
+						</div>
+						<!-- end of 20th indicator -->
+						<!-- Begining of 21st indicator -->
+						<h2 style="page-break-before: always;">
+							<h2 style="page-break-before: always;">21. Days of Stock outs of antibiotics
+								(Benzylpenicillin)</h2>
+							<div class="table-responsive-sm">
+								<table class="table table-striped table-bordered table-hover">
+									<thead class="thead-dark">
+										<th>Item</th>
+										<th>Description</th>
+									</thead>
+									<tr>
+										<td style="width:auto;">Indicator Definition:</td>
+										<td>Stock outs of antibiotics (Benzylpenicillin). Tracking these drugs would
+											help to ensure facilities do not run out of stock of the antibiotics.</td>
+									</tr>
+									<tr>
+										<td>Numerator:</td>
+										<td>Days of Stock outs of antibiotics (Benzylpenicillin).</td>
+									</tr>
+									<tr>
+										<td>Denominator:</td>
+										<td>None</td>
+									</tr>
+									<tr>
+										<td>Indicator Rationale:</td>
+										<td>Tracing stock outs helps health personnel to store/order adequate amount of
+											supplies to prevent interruption of essential interventions.</td>
+									</tr>
+
+								</table>
+							</div>
+							<div id="nationalGraphWDLOyb5bwZs" style="width: auto; height: auto;"></br></div>
+							<div id="graphWDLOyb5bwZs" style="width: auto; height: auto;"></br></div>
+							<div class="table-responsive-sm">
+								</br></br>
+								<table class="table table-striped table-bordered table-hover" id="table1">
+									<thead id="theadWDLOyb5bwZs">
+
+									</thead>
+									<tbody id="tbodyWDLOyb5bwZs">
+
+									</tbody>
+
+								</table>
+							</div>
+							<!-- end of 21st indicator -->
+
+							<!-- Begining of 22nd indicator -->
+							<h2 style="page-break-before: always;">22. Days of Stock outs of oxytocin</h2>
+							<div class="table-responsive-sm">
+								<table class="table table-striped table-bordered table-hover">
+									<thead class="thead-dark">
+										<th>Item</th>
+										<th>Description</th>
+									</thead>
+									<tr>
+										<td style="width:auto;">Indicator Definition:</td>
+										<td>Stock outs of oxytocin. Tracking these drugs would help to ensure facilities
+											do not run out of stock of such supplies.</td>
+									</tr>
+									<tr>
+										<td>Numerator:</td>
+										<td>Days of Stock outs of oxytocin.</td>
+									</tr>
+									<tr>
+										<td>Denominator:</td>
+										<td>None</td>
+									</tr>
+									<tr>
+										<td>Indicator Rationale:</td>
+										<td>Tracing stock outs helps health personnel to store/order adequate amount of
+											supplies to prevent interruption of essential interventions.</td>
+									</tr>
+
+								</table>
+							</div>
+							<div id="nationalGraphgD11zdrJkSb" style="width: auto; height: auto;"></br></div>
+							<div id="graphgD11zdrJkSb" style="width: auto; height: auto;"></br></div>
+							<div class="table-responsive-sm">
+								</br></br>
+								<table class="table table-striped table-bordered table-hover" id="table1">
+									<thead id="theadgD11zdrJkSb">
+
+									</thead>
+									<tbody id="tbodygD11zdrJkSb">
+
+									</tbody>
+
+								</table>
+							</div>
+
+							<!-- end of 22nd indicator -->
+
+							<!-- Begining of 23th indicator -->
+							<h2 style="page-break-before: always;">23. Days of Stock outs of chlorohexidine for cord
+								care</h2>
+							<div class="table-responsive-sm">
+								<table class="table table-striped table-bordered table-hover">
+									<thead class="thead-dark">
+										<th>Item</th>
+										<th>Description</th>
+									</thead>
+									<tr>
+										<td style="width:auto;">Indicator Definition:</td>
+										<td>Stock outs of chlorohexidine measured in number of days for which there was
+											a stock out.</td>
+									</tr>
+									<tr>
+										<td>Numerator:</td>
+										<td>Days of Stock outs of chlorohexidine for cord care</td>
+									</tr>
+									<tr>
+										<td>Denominator:</td>
+										<td>None</td>
+									</tr>
+									<tr>
+										<td>Indicator Rationale:</td>
+										<td>Neonatal sepsis is another major contributing factor of Neonatal deaths. As
+											such the use of chlorohexidine for cord care is very vital in controlling
+											infections. Tracing stock out of Chlorohexidine helps health personnel to
+											store/order adequate amount of supplies to prevent interruption of essential
+											interventions.</td>
+									</tr>
+
+								</table>
+							</div>
+							<div id="nationalGraph23" style="width: auto; height: auto;"></br></div>
+							<div id="graph23" style="width: auto; height: auto;"></br></div>
+							<div class="table-responsive-sm">
+								</br></br>
+								<table class="table table-striped table-bordered table-hover" id="table1">
+									<thead id="thead23">
+
+									</thead>
+									<tbody id="tbody23">
+
+									</tbody>
+
+								</table>
+							</div>
+
+							<!-- end of 23rd indicator -->
+
+							<!-- Begining of 24th indicator -->
+							<h2 style="page-break-before: always;">24. Days of Stock outs of pregnancy test kits</h2>
+							<div class="table-responsive-sm">
+								<table class="table table-striped table-bordered table-hover">
+									<thead class="thead-dark">
+										<th>Item</th>
+										<th>Description</th>
+									</thead>
+									<tr>
+										<td style="width:auto;">Indicator Definition:</td>
+										<td>Stock outs of pregnancy test kits as measured in number of days for which
+											the facility experienced stock outs.</td>
+									</tr>
+									<tr>
+										<td>Numerator:</td>
+										<td>Days of Stock outs of pregnancy test kits.</td>
+									</tr>
+									<tr>
+										<td>Denominator:</td>
+										<td>None</td>
+									</tr>
+									<tr>
+										<td>Indicator Rationale:</td>
+										<td>Availability of this item helps to enroll a lot of women in antenatal care
+											in the first trimester and furthermore, tracing stock outs helps health
+											personnel to store/order adequate amount of supplies to prevent interruption
+											of essential interventions.</td>
+									</tr>
+
+								</table>
+							</div>
+							<div id="nationalGraph24" style="width: auto; height: auto;"></br></div>
+							<div id="graph14" style="width: auto; height: auto;"></br></div>
+							<div class="table-responsive-sm">
+								</br></br>
+								<table class="table table-striped table-bordered table-hover" id="table1">
+									<thead id="thead24">
+
+									</thead>
+									<tbody id="tbody24">
+
+									</tbody>
+
+								</table>
+							</div>
+
+							<!-- end of 24th indicator -->
+
+							<!-- Begining of 25th indicator -->
+							<h2 style="page-break-before: always;">25. Days of stock out of syphilis test kits</h2>
+							<div class="table-responsive-sm">
+								<table class="table table-striped table-bordered table-hover">
+									<thead class="thead-dark">
+										<th>Item</th>
+										<th>Description</th>
+									</thead>
+									<tr>
+										<td style="width:auto;">Indicator Definition:</td>
+										<td>The number of days for which syphilis test kits were out of stock.</td>
+									</tr>
+									<tr>
+										<td>Numerator:</td>
+										<td>Days of stock out of syphilis test kits.</td>
+									</tr>
+									<tr>
+										<td>Denominator:</td>
+										<td>None</td>
+									</tr>
+									<tr>
+										<td>Indicator Rationale:</td>
+										<td>Tracing stock outs helps health personnel to store/order adequate amount of
+											supplies to prevent interruption of essential interventions.</td>
+									</tr>
+
+								</table>
+							</div>
+							<div id="nationalGrapht65pt8tACL9" style="width: auto; height: auto;"></br></div>
+							<div id="grapht65pt8tACL9" style="width: auto; height: auto;"></br></div>
+							<div class="table-responsive-sm">
+								</br></br>
+								<table class="table table-striped table-bordered table-hover" id="table1">
+									<thead id="theadt65pt8tACL9">
+
+									</thead>
+									<tbody id="tbodyt65pt8tACL9">
+
+									</tbody>
+
+								</table>
+							</div>
+
+							<!-- end of 25th indicator -->
+
+</body>
+
+</html>
